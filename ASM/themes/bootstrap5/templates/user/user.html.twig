@@ -1,0 +1,42 @@
+<article{{ attributes.addClass('profile') }}>
+    {% set fields = {
+        'Personal Information - Updated CV': content.field_user_basic_info_ref['#items'] is not empty,
+        'Academic Qualifications': content.field_user_academic_qualifi_ref['#items'] is not empty,
+        'Other relevant information - PhD Details': content.field_user_other_rel_info_ref['#items'] is not empty,
+        'Upload Research Proposal': content.field_user_research_proposal_ref['#items'] is not empty,
+        'Upload Publications': content.field_user_update_pub_ref['#items'] is not empty,
+        'You must provide a minimum of 8 referees': content.field_user_list_of_referees_ref['#items'] is not empty
+    } %}
+
+    {% set not_submitted = [] %}
+    {% for label, submitted in fields %}
+        {% if not submitted %}
+            {% set not_submitted = not_submitted|merge([label]) %}
+        {% endif %}
+    {% endfor %}
+
+{% if user.hasRole('user') %} 
+        {% if content.field_user_session_key['#items'] is empty %}
+            {% if not_submitted %}
+                Use the links on the left to navigate between sections.<br />    
+                Once you have filled in all the required fields, go to 'Submit Application' and click 'Submit'.<br />
+                If you do not submit your application within 15 days from the time you register, it will be automatically deleted, and you will need to re-start the procedure.<br />
+                You have <b>{{ user_days_remaining }}</b> days remaining.<br />
+                <br />
+                <p>The following fields are still incomplete:<br />
+                {% for label in not_submitted %}
+                    <b><span class="text-danger">{{ loop.index }}. {{ label }}</span></b><br />
+                {% endfor %}
+            {% else %}
+                Use the links on the left to navigate between sections.<br />    
+                Once you have filled in all the required fields, go to 'Submit Application' and click 'Submit'.<br />
+                If you do not submit your application within 15 days from the time you register, it will be automatically deleted, and you will need to re-start the procedure.<br />
+                You have <b>{{ user_days_remaining }}</b> days remaining.<br />
+            {% endif %}
+        {% else %}
+            All sections are submitted.
+        {% endif %}
+    {% else %}
+        {{ content }}
+    {% endif %}
+</article>

@@ -1,0 +1,7 @@
+ncbs.email_form:
+  path: 'admin/ncbs/email'
+  defaults:
+    _form: '\Drupal\ncbs\Form\EmailForm'
+    _title: 'Send Email to Deans'
+  requirements:
+    _permission: 'administer site configuration'

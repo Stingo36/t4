@@ -1,0 +1,13 @@
+name: Custom Field - Linkit integration
+type: module
+description: Provides a Linkit widget for Custom Field uri field types.
+core_version_requirement: ^9.4 || ^10.1
+package: Field
+dependencies:
+  - custom_field:custom_field
+  - linkit:linkit (>= 6)
+
+# Information added by Drupal.org packaging script on 2024-04-22
+version: '2.0.3'
+project: 'custom_field'
+datestamp: 1713764985

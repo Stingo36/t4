@@ -1,0 +1,76 @@
+{% set basic_information = node.field_basic_information_referenc.entity %}
+{% set basic_fields = basic_information.getFieldDefinitions() %}
+{% set ui_basic_fields = basic_fields|filter(field => field.getTargetBundle() == 'basic_information') %}
+
+
+
+
+
+
+
+{# node--submit-application.html.twig #}
+
+{% set basic_information = node.field_basic_information_referenc.entity %}
+{% set basic_fields = basic_information.getFieldDefinitions() %}
+{% set ui_basic_fields = basic_fields|filter(field => field.getTargetBundle() == 'basic_information') %}
+
+<div class="accordion" id="infoAccordion">
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="headingBasicInfo">
+      <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseBasicInfo" aria-expanded="true" aria-controls="collapseBasicInfo">
+        Basic Information
+      </button>
+    </h2>
+    <div id="collapseBasicInfo" class="accordion-collapse collapse show" aria-labelledby="headingBasicInfo" data-bs-parent="#infoAccordion">
+      <div class="accordion-body">
+        <table class="table table-responsive">
+          <tbody>
+            {% for field_name, field_definition in ui_basic_fields %}
+              {% set field_value = basic_information.get(field_name).value %}
+              <tr>
+                <th>{{ field_definition.getLabel() }}</th>
+                <td>{{ field_value is not empty ? field_value : '' }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="headingAcademicQualification">
+      <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseAcademicQualification" aria-expanded="false" aria-controls="collapseAcademicQualification">
+        Academic Qualification
+      </button>
+    </h2>
+    <div id="collapseAcademicQualification" class="accordion-collapse collapse" aria-labelledby="headingAcademicQualification" data-bs-parent="#infoAccordion">
+      <div class="accordion-body">
+
+        {% set academic_qualification_paragraph = node.field_academic_qualification_ref.entity.field_academic_qualification.entity %}
+        {% if academic_qualification_paragraph %}
+            <table class="table academic-qualification">
+                <tbody>
+                    {% for field_name, field in academic_qualification_paragraph %}
+                        {% if field_name|slice(0, 6) == 'field_' %}
+                            {% set label = field_labels[field_name] %}
+                            {% if field.value is not empty %}
+                                <tr>
+                                    <td>{{ label }}</td>
+                                    <td>{{ field.value }}</td>
+                                </tr>
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No academic qualification details found.</p>
+        {% endif %}
+
+
+        
+      </div>
+    </div>
+  </div>
+</div>

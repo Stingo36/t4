@@ -1,0 +1,564 @@
+<?php
+
+
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Access\AccessResult;
+use Drupal\node\NodeInterface;
+use Drupal\Core\Mail\MailManagerInterface;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\node\Entity\Node;
+use Drupal\user\Entity\User;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\paragraphs\Entity\Paragraph;
+use Drupal\Core\Database\Database;
+use Drupal\node\Entity\NodeType;
+use Symfony\Component\HttpFoundation\Request;
+use Drupal\Core\Url;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Response;
+
+use Drupal\Core\Messenger\MessengerInterface;
+
+include_once __DIR__ . '/includes/Validations/FormValidations.inc';
+include_once __DIR__ . '/includes/FormsAlter/UserFormAlter.inc';
+include_once __DIR__ . '/includes/FormsAlter/FormAlter.inc';
+include_once __DIR__ . '/includes/Comments/AddComments.inc';
+
+
+/* --------------------------- //!RELATED TO DISPLAY --------------------------- */
+
+/**
+ * Alters menu tabs to hide the "View" tab for users with the "user" role
+ * and hide the "Edit" tab for all users except those with the "administrator" role.
+ */
+function ncbs_menu_local_tasks_alter(&$data, $route_name, $route_parameters)
+{
+    $user = \Drupal::currentUser();
+
+    // Remove "View" tab for users with the "user" role.
+    if ($user->hasRole('user')) {
+        foreach ($data['tabs'] as &$tabs) {
+            foreach ($tabs as $key => $tab) {
+                if ($tab['#link']['title'] == 'View') {
+                    unset($tabs[$key]);
+                }
+            }
+        }
+    }
+
+    // Remove "Edit" tab for all users except those with the "administrator" role.
+    if (!$user->hasRole('administrator')) {
+        foreach ($data['tabs'] as &$tabs) {
+            foreach ($tabs as $key => $tab) {
+                if ($tab['#link']['title'] == 'Edit') {
+                    unset($tabs[$key]);
+                }
+            }
+        }
+    }
+}
+
+
+/**
+ * Invalidates user-specific cache tags when a user logs in.
+ */
+function ncbs_user_login($account)
+{
+    $tags = ['user:' . $account->id() . ':content'];
+    \Drupal::service('cache_tags.invalidator')->invalidateTags($tags);
+    \Drupal::cache('render')->invalidateAll();
+}
+
+
+/* --------------------- //!RELATED TO NODE/CONTENT ACCESS --------------------- */
+
+/**
+ * Restricts access to node creation if a user has already submitted an application.
+ */
+function ncbs_entity_create_access(AccountInterface $account, array $context, $entity_bundle)
+{
+    if (NodeType::load('add_comments')) {
+        \Drupal::messenger()->addMessage('Content type "add_comments" exists.');
+
+        $request = \Drupal::request();
+        $nid = $request->query->get('nid');
+        $session = $request->query->get('session');
+
+        if ($nid) {
+            $node = Node::load($nid);
+
+            if ($node && $node->bundle() == 'submit_application') {
+                \Drupal::messenger()->addMessage('Node with nid ' . $nid . ' is of content type "submit_application".');
+
+                if ($node->hasField('field_session_key') && !$node->get('field_session_key')->isEmpty()) {
+                    $session_value = $node->get('field_session_key')->value;
+                    \Drupal::messenger()->addMessage('Session value: ' . $session_value);
+
+                    if ($session == $session_value && $node->id() == $nid) {
+                        \Drupal::messenger()->addMessage('Access allowed: Session and node ID match.');
+                        return AccessResult::allowed();
+                    } else {
+                        \Drupal::messenger()->addMessage('Access denied: Session or node ID does not match.');
+                        return AccessResult::forbidden();
+                    }
+                }
+            }
+        }
+    }
+}
+
+/**
+ * Implements hook_node_access().
+ * Restricts access to specific node types for users who have already submitted an application.
+ */
+function ncbs_node_access(NodeInterface $node, $op, AccountInterface $account)
+{
+    $restricted_types = [
+        'basic_information',
+        'academic_qualification',
+        'other_relevant_information',
+        'list_of_referees_',
+        'research_proposal',
+        'update_publications',
+        'submit_application'
+    ];
+
+    if (($op === 'update' || $op === 'create') && in_array($node->getType(), $restricted_types)) {
+        if (check_submit_application($account)) {
+            return AccessResult::forbidden()->addCacheableDependency($node);
+        }
+    }
+
+    return AccessResult::neutral()->addCacheableDependency($node);
+}
+
+/**
+ * Checks if a user has already submitted an application.
+ */
+function check_submit_application(AccountInterface $account)
+{
+    $query = \Drupal::entityQuery('node')
+        ->condition('type', 'submit_application')
+        ->condition('uid', $account->id())
+        ->exists('field_session_key')
+        ->accessCheck(FALSE);
+
+    return !empty($query->execute());
+}
+
+
+/* ------------------------------ //!MAIL FUNCTION ----------------------------- */
+/**
+ * Defines email templates for various cases like thank you or general mail.
+ */
+function ncbs_mail($key, &$message, $params)
+{
+    switch ($key) {
+        case 'thank_you_mail':
+        case 'send_email':
+            $message['subject'] = $params['subject'];
+            $message['body'][] = $params['message'];
+            if (!empty($params['cc'])) {
+                $message['headers']['Cc'] = $params['cc'];
+            }
+            break;
+        case 'mail':
+            $message['to'] = $params['to'];
+            $message['subject'] = $params['subject'];
+            $message['body'][] = $params['body'];
+            $message['headers'] = [
+                'Content-Type' => 'text/html; charset=UTF-8; format=flowed',
+                'MIME-Version' => '1.0',
+            ];
+            break;
+    }
+}
+
+/* --------------------------------- //!CRONJOB -------------------------------- */
+/**
+ * Runs during cron jobs, checks user activity and blocks inactive users.
+ */
+function ncbs_cron()
+{
+    $user_ids = \Drupal::entityQuery('user')
+        ->condition('status', 1)
+        ->condition('roles', 'user')
+        ->execute();
+
+    foreach ($user_ids as $uid) {
+        $user = User::load($uid);
+        if ($user) {
+            $username = $user->getAccountName();
+            $created = $user->getCreatedTime();
+            $expire_date = strtotime("+15 days", $created);
+
+            // Check if the user has not submitted their session key and their account is expired.
+            if (empty($user->get('field_user_session_key')->getValue()) && time() > $expire_date) {
+                $user->block();
+                $user->save();
+            } elseif (empty($user->get('field_user_session_key')->getValue()) && time() < $expire_date) {
+                $remaining_days = ceil(($expire_date - time()) / (60 * 60 * 24));
+            }
+        }
+    }
+}
+
+
+/* -------------------------- //!ENTITY CREATE/UPPDATE ------------------------- */
+/**
+ * Handles actions after a node is created, including updating application submissions.
+ */
+function ncbs_entity_insert(EntityInterface $entity)
+{
+    // Handle logic for comments and node insertion.
+    if ($entity->bundle() === 'add_comments') {
+        $current_user = \Drupal::currentUser();
+        AddCommentByRole($entity, $current_user, \Drupal::messenger(), \Drupal::service('request_stack'));
+    }
+    // elseif ($entity->bundle() === 'send_emails') {
+    //     // Get the current request to extract the URL parameters
+    //     $request = \Drupal::request();
+        
+    //     // Get 'nid' and 'session' from the URL
+    //     $nid = $request->query->get('nid');
+    //     $session = $request->query->get('session');
+    
+    //     // Get the field values from the entity
+    //     $email_body = $entity->get('field_email_body')->value;
+    //     $email_subject = $entity->get('field_subject')->value; // Assuming field_subject exists
+    
+    //     // Get the current user email
+    //     $current_user = \Drupal::currentUser();
+    //     $from_email = $current_user->getEmail();
+    
+    //     // Initialize a default updated email body
+    //     $updated_email_body = $email_body;
+    
+    //     // Load the node by nid to get the title (for [[CANDIDATE_NAME]] replacement)
+    //     if ($nid) {
+    //         $node = \Drupal\node\Entity\Node::load($nid);
+            
+    //         if ($node instanceof \Drupal\node\NodeInterface) {
+    //             // Get the title of the node (will replace [[CANDIDATE_NAME]])
+    //             $title = $node->getTitle();
+    
+    //             // Replace [[CANDIDATE_NAME]] in email body with the node title
+    //             $updated_email_body = str_replace('[[CANDIDATE_NAME]]', $title, $email_body);
+    //         }
+    //         else {
+    //             \Drupal::messenger()->addError(t('No node found with nid: @nid', ['@nid' => $nid]));
+    //         }
+    //     }
+    //     else {
+    //         \Drupal::messenger()->addError(t('No nid parameter provided in the URL.'));
+    //     }
+    
+    //     // Check if the selected value in field_send_email_ is 'Dean'
+    //     if ($entity->get('field_send_email_')->value === 'Dean') {
+    //         // Get user IDs from the field_to_dean (assuming it's a reference field)
+    //         $user_ids = $entity->get('field_to_dean')->getValue();
+            
+    //         // Loop through each user ID and load the user entity to get the email and username
+    //         foreach ($user_ids as $user_id) {
+    //             $user = \Drupal\user\Entity\User::load($user_id['target_id']);
+    //             if ($user) {
+    //                 $email = $user->getEmail();  // Get the user email
+    //                 $username = $user->getDisplayName(); // Get the user username
+    
+    //                 // Replace [[RECEIVER_KEY]] with the username in the email body
+    //                 $personalized_email_body = str_replace('[[RECEIVER_KEY]]', $username, $updated_email_body);
+    
+    //                 // Save the updated email body with both [[CANDIDATE_NAME]] and [[RECEIVER_KEY]] replaced in the entity
+    //                 $entity->set('field_email_body', $personalized_email_body);
+    //                 $entity->save(); // Save the updated entity to reflect changes
+    
+    //                 // Define mail parameters for this specific user
+    //                 $mailManager = \Drupal::service('plugin.manager.mail');
+    //                 $module = 'ncbs'; // Replace with your module's machine name
+    //                 $key = 'send_email'; // The key used to identify the mail (can be custom)
+    //                 $params['subject'] = $email_subject;
+    //                 $params['body'] = $personalized_email_body;
+    //                 $langcode = $current_user->getPreferredLangcode();
+    
+    //                 // Send the mail
+    //                 $result = $mailManager->mail($module, $key, $email, $langcode, $params, $from_email, TRUE);
+    
+    //                 // Check if the email was sent successfully for this recipient
+    //                 if ($result['result'] === TRUE) {
+    //                     \Drupal::messenger()->addMessage(t('The email has been sent to @to.', ['@to' => $email]));
+    //                 }
+    //                 else {
+    //                     \Drupal::messenger()->addError(t('There was a problem sending the email to @to.', ['@to' => $email]));
+    //                 }
+    //             }
+    //         }
+    //     }
+    //     else {
+    //         // If the value is not Dean, send email to the default specified recipient
+    //         $to = 'likithams@ncbs.res.in';
+    //         $personalized_email_body = str_replace('[[RECEIVER_KEY]]', 'Recipient', $updated_email_body); // Use a generic replacement if no user-specific receiver
+    
+    //         // Save the updated email body with generic replacement in the entity
+    //         $entity->set('field_email_body', $personalized_email_body);
+    //         $entity->save(); // Save the updated entity to reflect changes
+    
+    //         // Define mail parameters
+    //         $mailManager = \Drupal::service('plugin.manager.mail');
+    //         $module = 'ncbs'; // Replace with your module's machine name
+    //         $key = 'send_email'; // The key used to identify the mail (can be custom)
+    //         $params['subject'] = $email_subject;
+    //         $params['body'] = $personalized_email_body;
+    //         $langcode = $current_user->getPreferredLangcode();
+            
+    //         // Send the mail
+    //         $result = $mailManager->mail($module, $key, $to, $langcode, $params, $from_email, TRUE);
+    
+    //         // Check if the email was sent successfully
+    //         if ($result['result'] === TRUE) {
+    //             \Drupal::messenger()->addMessage(t('The email has been sent to @to.', ['@to' => $to]));
+    //         }
+    //         else {
+    //             \Drupal::messenger()->addError(t('There was a problem sending the email.'));
+    //         }
+    //     }
+    // }
+
+
+    $content_types = [
+        'basic_information' => 'basic_information_nodes',
+        'academic_qualification' => 'academic_qualification',
+        'other_relevant_information' => 'other_relevant_information',
+        'list_of_referees_' => 'list_of_referees',
+        'update_publications' => 'update_publications',
+        'research_proposal' => 'research_proposal'
+    ];
+
+    if ($entity->getEntityTypeId() === 'node' && isset($content_types[$entity->bundle()])) {
+        $user_id = $entity->getOwnerId();
+        \Drupal::service('cache_tags.invalidator')->invalidateTags(['user:' . $user_id . ':' . $content_types[$entity->bundle()]]);
+    }
+
+    if ($entity->getEntityTypeId() === 'node') {
+        $type = $entity->bundle();
+        $user = \Drupal::currentUser();
+
+        // Handle references for application submission.
+        if ($entity->getOwner()->id() === $user->id()) {
+            $reference_field = match ($type) {
+                'academic_qualification' => 'field_academic_qualification_ref',
+                'basic_information' => 'field_basic_information_referenc',
+                'other_relevant_information' => 'field_other_relevant_info_ref',
+                'list_of_referees_' => 'field_list_of_referees_ref',
+                'research_proposal' => 'field_research_proposal_ref',
+                'update_publications' => 'field_update_publications_ref',
+                default => null
+            };
+
+            $existing_submission = \Drupal::entityQuery('node')
+                ->condition('type', 'submit_application')
+                ->condition('uid', $user->id())
+                ->range(0, 1)
+                ->accessCheck(TRUE)
+                ->execute();
+
+            if (!empty($existing_submission)) {
+                $submission_id = reset($existing_submission);
+                $submission = Node::load($submission_id);
+                $submission->set($reference_field, $entity->id());
+                $submission->save();
+            }
+        }
+    }
+}
+
+/**
+ * Handles actions after a node is updated, including sending confirmation emails.
+ */
+function ncbs_entity_update(EntityInterface $entity)
+{
+    if ($entity->getEntityTypeId() === 'node') {
+        // Case for 'submit_application' bundle.
+        if ($entity->bundle() === 'submit_application') {
+            $node = Node::load($entity->id());
+
+            if (!$node->get('field_session_key')->isEmpty()) {
+                $to = 'sahilst@ext.ncbs.res.in';
+                $subject = 'Submission Confirmation';
+                $message = 'Thank you for your submission.';
+                $params = [
+                    'subject' => $subject,
+                    'message' => $message,
+                ];
+
+                // Send thank you email.
+                $mailManager = \Drupal::service('plugin.manager.mail');
+                $mailManager->mail('ncbs', 'thank_you_mail', $to, \Drupal::languageManager()->getDefaultLanguage()->getId(), $params);
+            }
+        }
+
+        // Case for 'add_comments' bundle.
+
+
+        if ($entity instanceof \Drupal\node\NodeInterface && $entity->bundle() == 'add_comments') {
+            // Clear all cache when the node is updated.
+            \Drupal::messenger()->addMessage('cache.');
+            \Drupal::service('cache.render')->invalidateAll();
+          }
+    }
+}
+
+
+
+
+
+//Sending email
+
+use Drupal\Core\Datetime\DrupalDateTime;
+
+function ncbs_form_node_send_emails_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+    if ($form_id == 'node_send_emails_form') {
+        $type = \Drupal::request()->query->get('type');
+        
+        if ($type === 'Referee') {
+            \Drupal::messenger()->addMessage(t('This is the Referee email form.'), 'status');
+
+            foreach (['field_send_email_', 'field_to_board', 'field_to_dean', 'field_to_director', 'field_email_body'] as $field) {
+                if (isset($form[$field])) {
+                    $form[$field]['#access'] = FALSE;
+                }
+            }
+
+            $nid = \Drupal::request()->query->get('nid');
+            if ($nid && $node = Node::load($nid)) {
+                if ($node->hasField('field_list_of_referees_ref') && !$node->get('field_list_of_referees_ref')->isEmpty()) {
+                    foreach ($node->get('field_list_of_referees_ref') as $ref) {
+                        $referee_paragraph = $ref->entity;
+                        if ($referee_paragraph && $referee_paragraph->hasField('field_email') && !$referee_paragraph->get('field_email')->isEmpty()) {
+                            $referee_email = $referee_paragraph->get('field_email')->value;
+
+                            // Log and set the referee email to verify
+                            \Drupal::logger('ncbs')->info('Referee email captured: @referee_email', ['@referee_email' => $referee_email]);
+                            $form_state->set('referee_email', $referee_email);
+                        } else {
+                            \Drupal::logger('ncbs')->warning('Referee paragraph exists but does not have an email.');
+                        }
+                    }
+                } else {
+                    \Drupal::logger('ncbs')->warning('field_list_of_referees_ref is empty or does not exist for node @nid', ['@nid' => $nid]);
+                }
+            }
+        } else {
+            if (isset($form['field_email_body_referee'])) {
+                $form['field_email_body_referee']['#access'] = FALSE;
+            }
+        }
+
+        unset($form['actions']['submit']['#submit']);
+        $form['actions']['submit']['#submit'][] = 'ncbs_custom_send_emails_submit';
+    }
+}
+
+/**
+ * Custom submit handler for the send_emails content type.
+ */
+function ncbs_custom_send_emails_submit(array &$form, FormStateInterface $form_state) {
+    $values = $form_state->getValues();
+    $current_user = \Drupal::currentUser();
+    $type = \Drupal::request()->query->get('type');
+    $nid = \Drupal::request()->query->get('nid');
+
+    $current_node = Node::load($nid);
+    $candidate_name = $current_node ? $current_node->getOwner()->getAccountName() : 'Unknown';
+
+    if ($type === 'Referee') {
+        $subject = $values['field_subject'][0]['value'] ?? NULL;
+        $email_body = $values['field_email_body_referee'][0]['value'] ?? NULL;
+        $referee_email = $form_state->get('referee_email');
+
+        if ($referee_email) {
+            \Drupal::logger('ncbs')->info('Sending email to Referee: @referee_email', ['@referee_email' => $referee_email]);
+
+            $params = [
+                'subject' => $subject,
+                'message' => $email_body,
+            ];
+
+            $mail_manager = \Drupal::service('plugin.manager.mail');
+            $result = $mail_manager->mail('ncbs', 'send_email', $referee_email, $current_user->getPreferredLangcode(), $params, NULL, TRUE);
+            
+            $status = $result['result'] ? 'Sent' : 'Failed';
+            \Drupal::logger('ncbs')->info('Email send status for Referee: @status', ['@status' => $status]);
+
+            $log_node = Node::create([
+                'type' => 'send_emails',
+                'title' => $values['title'][0]['value'] ?? 'Referee Email',
+                'field_subject' => $subject,
+                'field_email_body' => [
+                    'value' => $email_body,
+                    'format' => 'full_html',
+                ],
+                'field_sender_email_id' => $referee_email,
+                'field_email_sta' => $status,
+                'field_current_user_login' => $current_user->getAccountName(),
+                'field_email_sent_time' => (new DrupalDateTime('now', new \DateTimeZone('UTC')))->format('Y-m-d H:i:s'),
+                'field_candidate_reference' => $nid,
+            ]);
+            $log_node->save();
+        } else {
+            \Drupal::logger('ncbs')->error('Referee email is not set, email not sent.');
+        }
+    } else {
+        $subject = $values['field_subject'][0]['value'] ?? NULL;
+        $email_body = $values['field_email_body'][0]['value'] ?? NULL;
+
+        $selected_users = [
+            'field_to_dean' => $values['field_to_dean'] ?? [],
+            'field_to_director' => $values['field_to_director'] ?? [],
+            'field_to_board' => $values['field_to_board'] ?? [],
+        ];
+
+        foreach ($selected_users as $field => $users) {
+            foreach ($users as $user) {
+                if ($user_entity = \Drupal\user\Entity\User::load($user['target_id'])) {
+                    $recipient_email = $user_entity->getEmail();
+
+                    $personalized_email_body = str_replace(
+                        ['[[CANDIDATE_NAME]]', '[[RECEIVER_KEY]]'],
+                        [$candidate_name, $user_entity->getAccountName()],
+                        $email_body
+                    );
+
+                    $params = [
+                        'subject' => $subject,
+                        'message' => $personalized_email_body,
+                    ];
+
+                    $mail_manager = \Drupal::service('plugin.manager.mail');
+                    $result = $mail_manager->mail('ncbs', 'send_email', $recipient_email, $current_user->getPreferredLangcode(), $params, NULL, TRUE);
+
+                    $status = $result['result'] ? 'Sent' : 'Failed';
+
+                    $log_node = Node::create([
+                        'type' => 'send_emails',
+                        'title' => $subject,
+                        'field_subject' => $subject,
+                        'field_email_body' => [
+                            'value' => $personalized_email_body,
+                            'format' => 'full_html',
+                        ],
+                        'field_sender_email_id' => $recipient_email,
+                        'field_email_sta' => $status,
+                        'field_current_user_login' => $current_user->getAccountName(),
+                        'field_email_sent_time' => (new DrupalDateTime('now', new \DateTimeZone('UTC')))->format('Y-m-d H:i:s'),
+                        'field_candidate_reference' => $nid,
+                    ]);
+                    $log_node->save();
+                }
+            }
+        }
+    }
+
+    $form_state->setRedirectUrl(Url::fromUserInput('/new-applications'));
+}

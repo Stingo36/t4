@@ -1,0 +1,10 @@
+type: module
+name: Content Entity Clone
+description: 'Provides content entity cloning.'
+package: reliefweb
+core_version_requirement: ^9 || ^10 || ^11
+
+# Information added by Drupal.org packaging script on 2024-09-04
+version: '1.0.4'
+project: 'content_entity_clone'
+datestamp: 1725429116
