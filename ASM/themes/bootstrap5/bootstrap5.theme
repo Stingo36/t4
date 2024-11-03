@@ -1,0 +1,723 @@
+<?php
+
+/**
+ * @file
+ * bootstrap5 theme file.
+ */
+
+use Drupal\block\Entity\Block;
+use Drupal\bootstrap5\SettingsManager;
+use Drupal\bootstrap5\SubthemeFormManager;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Render\Element;
+use Drupal\views\ViewExecutable;
+
+/**
+ * Implements hook_theme_suggestions_HOOK_alter().
+ */
+function bootstrap5_theme_suggestions_page_alter(array &$suggestions, array $variables)
+{
+
+  if (isset($_GET['styleguide'])) {
+    $suggestions[] = 'page__styleguide';
+  }
+
+  if (isset($variables['attributes']['data-block']['region'])) {
+    $region = $variables['attributes']['data-block']['region'];
+    $suggestions[] = $variables['theme_hook_original'] . '__' . $region;
+    $suggestions[] = 'menu__' . $region;
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function bootstrap5_form_system_theme_settings_alter(&$form, FormStateInterface $form_state, $form_id = NULL)
+{
+  $settings_manager = new SettingsManager(\Drupal::service('theme.manager'));
+  return $settings_manager->themeSettingsAlter($form, $form_state, $form_id);
+}
+
+/**
+ * Validate callback to ensure filter order and allowed_html are compatible.
+ */
+function bootstrap5_form_system_theme_settings_subtheme_validate(array &$form, FormStateInterface $form_state)
+{
+  $subtheme_form_manager = new SubthemeFormManager();
+  return $subtheme_form_manager->validateForm($form, $form_state);
+}
+
+/**
+ * Form submission handler for node_form().
+ *
+ * @see bootstrap5_form_system_theme_settings_alter()
+ */
+function bootstrap5_form_system_theme_settings_subtheme_submit($form, FormStateInterface $form_state)
+{
+  $subtheme_form_manager = new SubthemeFormManager();
+  return $subtheme_form_manager->submitForm($form, $form_state);
+}
+
+/**
+ * Implements theme_preprocess_html().
+ */
+function bootstrap5_preprocess_html(&$variables)
+{
+  // Body colour theme.
+  $variables['b5_body_schema'] = theme_get_setting('b5_body_schema');
+  $variables['b5_body_bg_schema'] = theme_get_setting('b5_body_bg_schema');
+}
+
+/**
+ * Implements theme_preprocess_page().
+ */
+function bootstrap5_preprocess_page(&$variables)
+{
+  // Pass variables to theme.
+  $variables['b5_top_container'] = theme_get_setting('b5_top_container');
+  // Navbar colour theme.
+  $variables['b5_navbar_schema'] = theme_get_setting('b5_navbar_schema');
+  $variables['b5_navbar_bg_schema'] = theme_get_setting('b5_navbar_bg_schema');
+  // Footer colour theme.
+  $variables['b5_footer_schema'] = theme_get_setting('b5_footer_schema');
+  $variables['b5_footer_bg_schema'] = theme_get_setting('b5_footer_bg_schema');
+
+  //\Drupal::messenger()->addMessage('TEEE<pre>' . print_r($variables, TRUE) . '</pre>');
+
+
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for menu-local-tasks templates.
+ *
+ * Use preprocess hook to set #attached to child elements
+ * because they will be processed by Twig and drupal_render will
+ * be invoked.
+ */
+function bootstrap5_preprocess_menu_local_tasks(&$variables)
+{
+  if (!empty($variables['primary'])) {
+    $variables['primary']['#attached'] = [
+      'library' => [
+        'bootstrap5/drupal.nav-tabs',
+      ],
+    ];
+  } elseif (!empty($variables['secondary'])) {
+    $variables['secondary']['#attached'] = [
+      'library' => [
+        'bootstrap5/drupal.nav-tabs',
+      ],
+    ];
+  }
+
+  foreach (Element::children($variables['primary']) as $key) {
+    $variables['primary'][$key]['#level'] = 'primary';
+  }
+  foreach (Element::children($variables['secondary']) as $key) {
+    $variables['secondary'][$key]['#level'] = 'secondary';
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for menu-local-task templates.
+ */
+function bootstrap5_preprocess_menu_local_task(&$variables)
+{
+  // Ensure is-active class is set when the tab is active. The generic active
+  // link handler applies stricter comparison rules than what is necessary for
+  // tabs.
+  if (isset($variables['is_active']) && $variables['is_active'] === TRUE) {
+    $variables['link']['#options']['attributes']['class'][] = 'nav-link active is-active';
+  } else {
+    $variables['link']['#options']['attributes']['class'][] = 'nav-link';
+  }
+
+  if (isset($variables['element']['#level'])) {
+    $variables['level'] = $variables['element']['#level'];
+  }
+}
+
+/**
+ * Callback to convert attributes class which is string to array.
+ *
+ * @param array $variables
+ *   The variables to render from preprocess function.
+ */
+function _bootstrap5_attributes_class_string_to_array(&$variables)
+{
+  if (
+    isset($variables['attributes']) &&
+    isset($variables['attributes']['class']) &&
+    !is_array($variables['attributes']['class'])
+  ) {
+    $variables['attributes']['class'] = [$variables['attributes']['class']];
+  }
+}
+
+/**
+ * Implements theme_preprocess_textarea().
+ */
+function bootstrap5_preprocess_textarea(&$variables)
+{
+  _bootstrap5_attributes_class_string_to_array($variables);
+  $variables['attributes']['class'][] = 'form-control';
+}
+
+/**
+ * Implements template_preprocess_HOOK() for input.
+ */
+function bootstrap5_preprocess_input(&$variables)
+{
+  _bootstrap5_attributes_class_string_to_array($variables);
+
+  $type_html = $variables['attributes']['type'];
+  $text_types_html = [
+    'text',
+    'email',
+    'tel',
+    'number',
+    'search',
+    'password',
+    'url',
+    'month',
+    'week',
+    'date',
+    'time',
+  ];
+
+  if (in_array($type_html, $text_types_html)) {
+    $variables['attributes']['class'][] = 'form-control';
+  }
+
+  if (in_array($type_html, ['checkbox'])) {
+    $variables['attributes']['class'][] = 'form-check-input';
+  }
+}
+
+/**
+ * Implements theme_preprocess_datetime_form().
+ */
+function bootstrap5_preprocess_datetime_form(&$variables)
+{
+  _bootstrap5_attributes_class_string_to_array($variables);
+  $variables['attributes']['class'][] = 'form-inline';
+}
+
+/**
+ * Implements theme_preprocess_views_ui_display_tab_setting().
+ */
+function bootstrap5_preprocess_views_ui_display_tab_setting(&$variables)
+{
+  _bootstrap5_attributes_class_string_to_array($variables);
+  $variables['attributes']['class'][] = 'my-1';
+}
+
+/**
+ * Implements theme_preprocess_views_ui_display_tab_bucket().
+ */
+function bootstrap5_preprocess_views_ui_display_tab_bucket(&$variables)
+{
+  _bootstrap5_attributes_class_string_to_array($variables);
+  $variables['attributes']['class'][] = 'my-2';
+}
+
+/**
+ * Implements theme_preprocess_image().
+ */
+function bootstrap5_preprocess_image(&$variables)
+{
+  _bootstrap5_attributes_class_string_to_array($variables);
+  $variables['attributes']['class'][] = 'img-fluid';
+}
+
+/**
+ * Callback to add standard table classes.
+ *
+ * @see https://getbootstrap.com/docs/5.2/content/tables/
+ */
+function bootstrap5_add_table_variables(&$variables)
+{
+  _bootstrap5_attributes_class_string_to_array($variables);
+  $variables['attributes']['class'][] = 'table';
+}
+
+/**
+ * Callback to add standard table classes.
+ *
+ * @see https://getbootstrap.com/docs/5.2/content/tables/
+ */
+function bootstrap5_add_table_striped_variables(&$variables)
+{
+  _bootstrap5_attributes_class_string_to_array($variables);
+  $variables['attributes']['class'][] = 'table-striped';
+}
+
+/**
+ * Implements theme_preprocess_system_modules_details().
+ */
+function bootstrap5_preprocess_system_modules_details(&$variables)
+{
+  bootstrap5_add_table_variables($variables);
+  bootstrap5_add_table_striped_variables($variables);
+}
+
+/**
+ * Implements theme_preprocess_system_modules_uninstall().
+ */
+function bootstrap5_preprocess_system_modules_uninstall(&$variables)
+{
+  bootstrap5_add_table_variables($variables);
+  bootstrap5_add_table_striped_variables($variables);
+}
+
+/**
+ * Implements theme_preprocess_views_ui_views_listing_table().
+ */
+function bootstrap5_preprocess_views_ui_views_listing_table(&$variables)
+{
+  bootstrap5_add_table_variables($variables);
+  bootstrap5_add_table_striped_variables($variables);
+}
+
+/**
+ * Implements theme_preprocess_table().
+ */
+function bootstrap5_preprocess_table(&$variables)
+{
+  bootstrap5_add_table_variables($variables);
+}
+
+/**
+ * Implements hook_views_pre_render().
+ */
+function bootstrap5_views_pre_render(ViewExecutable $view)
+{
+  $add_classes = function (&$option, array $classes_to_add) {
+    $classes = preg_split('/\s+/', $option);
+    $classes = array_filter($classes);
+    $classes = array_merge($classes, $classes_to_add);
+    $option = implode(' ', array_unique($classes));
+  };
+
+  if ($view->id() === 'media_library') {
+    if ($view->display_handler->options['defaults']['css_class']) {
+      $add_classes($view->displayHandlers->get('default')->options['css_class'], ['media-library-view']);
+    } else {
+      $add_classes($view->display_handler->options['css_class'], ['media-library-view']);
+    }
+
+    if ($view->current_display === 'page') {
+      if (array_key_exists('media_bulk_form', $view->field)) {
+        $add_classes($view->field['media_bulk_form']->options['element_class'], ['media-library-item__click-to-select-checkbox']);
+      }
+      if (array_key_exists('rendered_entity', $view->field)) {
+        $add_classes($view->field['rendered_entity']->options['element_class'], ['media-library-item__content']);
+      }
+      if (array_key_exists('edit_media', $view->field)) {
+        $add_classes($view->field['edit_media']->options['alter']['link_class'], ['media-library-item__edit']);
+        $add_classes($view->field['edit_media']->options['alter']['link_class'], ['icon-link']);
+      }
+      if (array_key_exists('delete_media', $view->field)) {
+        $add_classes($view->field['delete_media']->options['alter']['link_class'], ['media-library-item__remove']);
+        $add_classes($view->field['delete_media']->options['alter']['link_class'], ['icon-link']);
+      }
+    } elseif (strpos($view->current_display, 'widget') === 0) {
+      if (array_key_exists('rendered_entity', $view->field)) {
+        $add_classes($view->field['rendered_entity']->options['element_class'], ['media-library-item__content']);
+      }
+      if (array_key_exists('media_library_select_form', $view->field)) {
+        $add_classes($view->field['media_library_select_form']->options['element_wrapper_class'], ['media-library-item__click-to-select-checkbox']);
+      }
+
+      if ($view->display_handler->options['defaults']['css_class']) {
+        $add_classes($view->displayHandlers->get('default')->options['css_class'], ['media-library-view--widget']);
+      } else {
+        $add_classes($view->display_handler->options['css_class'], ['media-library-view--widget']);
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess_media_library_item__widget().
+ *
+ * This targets each media item selected in an entity reference field.
+ */
+function bootstrap5_preprocess_media_library_item__widget(array &$variables)
+{
+  $variables['content']['remove_button']['#attributes']['class'][] = 'media-library-item__remove';
+  $variables['content']['remove_button']['#attributes']['class'][] = 'icon-link';
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ *
+ * Pass block region value to content so this can be used in
+ * THEME_theme_suggestions_menu_alter.
+ */
+function bootstrap5_preprocess_block(&$variables)
+{
+  if (isset($variables['elements']['#id'])) {
+    $block = Block::load($variables['elements']['#id']);
+    if ($block) {
+      $region = Block::load($variables['elements']['#id'])->getRegion();
+      if (!empty($region)) {
+        $variables['content']['#attributes']['data-block']['region'] = $region;
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK_alter().
+ */
+function bootstrap5_theme_suggestions_menu_alter(array &$suggestions, array $variables)
+{
+  if (isset($variables['attributes']['data-block']['region'])) {
+    $region = $variables['attributes']['data-block']['region'];
+    $suggestions[] = $variables['theme_hook_original'] . '__' . $region;
+    $suggestions[] = 'menu__' . $region;
+  }
+}
+
+/* ------------------------ //! CUSTOM FUNCTION ADDED ----------------------- */
+
+use Drupal\Core\Datetime\DateFormatterInterface;
+use Drupal\Component\Datetime\TimeInterface;
+
+/**
+ * Implements hook_preprocess_HOOK() for user templates.
+ */
+function bootstrap5_preprocess_user(&$variables)
+{
+  $user = $variables['elements']['#user'];
+  $current_time = \Drupal::service('datetime.time')->getRequestTime();
+
+  // User creation time
+  $account_creation_time = $user->getCreatedTime();
+
+  // Total days since creation
+  $days_since_creation = floor(($current_time - $account_creation_time) / (24 * 60 * 60));
+
+  // Calculate remaining days in the 15-day period
+  $days_remaining = max(15 - $days_since_creation, 0); // Ensures that the days remaining doesn't go below 0
+
+  // Add variables to the template
+  $variables['user_days_remaining'] = $days_remaining;
+}
+
+
+
+
+
+
+function bootstrap5_preprocess_paragraph__other_relevant_information(&$variables)
+{
+  // Your code here.
+  $paragraph = $variables['paragraph']; // This gets the paragraph entity.
+  if (isset($paragraph)) {
+    $variables['field_definitions'] = $paragraph->getFieldDefinitions();
+  }
+}
+function bootstrap5_preprocess_paragraph__education_(&$variables)
+{
+  // Your code here.
+  $paragraph = $variables['paragraph']; // This gets the paragraph entity.
+  if (isset($paragraph)) {
+    $variables['field_definitions'] = $paragraph->getFieldDefinitions();
+  }
+}
+
+function bootstrap5_preprocess_paragraph__referee_details(&$variables)
+{
+  // Your code here.
+  $paragraph = $variables['paragraph']; // This gets the paragraph entity.
+  if (isset($paragraph)) {
+    $variables['field_definitions'] = $paragraph->getFieldDefinitions();
+  }
+}
+function bootstrap5_preprocess_paragraph__publications(&$variables)
+{
+  // Your code here.
+  $paragraph = $variables['paragraph']; // This gets the paragraph entity.
+  if (isset($paragraph)) {
+    $variables['field_definitions'] = $paragraph->getFieldDefinitions();
+  }
+}
+function bootstrap5_preprocess_paragraph__research_proposals(&$variables)
+{
+  // Your code here.
+  $paragraph = $variables['paragraph']; // This gets the paragraph entity.
+  if (isset($paragraph)) {
+    $variables['field_definitions'] = $paragraph->getFieldDefinitions();
+  }
+}
+
+
+//!
+use Drupal\node\Entity\Node;
+use Drupal\Core\Messenger\MessengerInterface;
+
+
+
+function bootstrap5_preprocess_node(&$variables)
+{
+  $node = $variables['node'];
+
+  if ($node->hasField('field_academic_qualification_ref') && !$node->get('field_academic_qualification_ref')->isEmpty()) {
+    $academic_qualification_ref = $node->get('field_academic_qualification_ref')->entity;
+    $variables['academic_qualification_ref'] = $academic_qualification_ref;
+  }
+  
+}
+
+
+/**
+ * Implements hook_preprocess_node__submit_application().
+ */
+function bootstrap5_preprocess_node__submit_application(&$variables)
+{
+  // Check if the node exists before proceeding.
+  if (isset($variables['node'])) {
+    $node = $variables['node'];
+
+    // Check if the field exists and is not empty.
+    if ($node->hasField('field_basic_information_referenc') && !$node->get('field_basic_information_referenc')->isEmpty()){
+      // Load the referenced basic_information entity.
+      $basic_information = $node->field_basic_information_referenc->entity;
+
+      // Check if the basic_information entity is loaded.
+      if ($basic_information) {
+        // Get the field definitions for the basic_information entity.
+        $basic_fields = $basic_information->getFieldDefinitions();
+
+        // Filter the fields to include only those in the 'basic_information' bundle.
+        $ui_basic_fields = array_filter($basic_fields, function ($field_definition) {
+          return $field_definition->getTargetBundle() == 'basic_information';
+        });
+
+        // Get the weight order from the 'manage display' settings for basic information.
+        $basic_display = \Drupal::entityTypeManager()->getStorage('entity_view_display')
+          ->load('node.basic_information.full');
+        $basic_components = $basic_display->getComponents();
+        uasort($basic_components, function ($a, $b) {
+          return $a['weight'] <=> $b['weight'];
+        });
+
+        // Extract labels and values for basic information in the correct weight order.
+        $ordered_basic_fields = [];
+        foreach ($basic_components as $field_name => $display_options) {
+          if (isset($ui_basic_fields[$field_name])) {
+            $field = $basic_information->get($field_name);
+            if ($field->getFieldDefinition()->getType() == 'image' || $field->getFieldDefinition()->getType() == 'file') {
+              $value = $field->view(['label' => 'hidden']);
+            } else {
+              $value = $field->value;
+            }
+            $ordered_basic_fields[$field_name] = [
+              'label' => $ui_basic_fields[$field_name]->getLabel(),
+              'value' => $value,
+            ];
+          }
+        }
+
+        // Pass the filtered and sorted basic information fields to the template.
+        $variables['ui_basic_fields'] = $ordered_basic_fields;
+      } else {
+        \Drupal::logger('bootstrap5')->error('Basic Information entity could not be loaded.');
+      }
+    }
+
+    if ($node->hasField('field_other_relevant_info_ref') && !$node->get('field_other_relevant_info_ref')->isEmpty()) {
+      // Load the referenced other_relevant_info entity.
+      $other_relevant_info = $node->field_other_relevant_info_ref->entity;
+    
+      // Check if the other_relevant_info entity is loaded.
+      if ($other_relevant_info) {
+        // Get the field definitions for the other_relevant_info entity.
+        $relevant_fields = $other_relevant_info->getFieldDefinitions();
+    
+        // Filter the fields to include only those in the 'other_relevant_information' bundle.
+        $ui_relevant_fields = array_filter($relevant_fields, function ($field_definition) {
+          return $field_definition->getTargetBundle() == 'other_relevant_information';
+        });
+    
+        // Get the weight order from the 'manage display' settings for other relevant info.
+        $relevant_display = \Drupal::entityTypeManager()->getStorage('entity_view_display')
+          ->load('node.other_relevant_information.full');
+    
+        if ($relevant_display) {
+          $relevant_components = $relevant_display->getComponents();
+          uasort($relevant_components, function ($a, $b) {
+            return $a['weight'] <=> $b['weight'];
+          });
+    
+          // Extract labels and values for other relevant info in the correct weight order.
+          $ordered_relevant_fields = [];
+          foreach ($relevant_components as $field_name => $display_options) {
+            if (isset($ui_relevant_fields[$field_name])) {
+              $field = $other_relevant_info->get($field_name);
+              
+              // Check if the field is a list field and get all values if so.
+              if ($field->getFieldDefinition()->getType() == 'list_string') {
+                $values = [];
+                foreach ($field as $item) {
+                  $values[] = $item->value;
+                }
+                $value = implode(', ', $values);
+              } else {
+                $value = $field->value;
+              }
+              
+              $ordered_relevant_fields[$field_name] = [
+                'label' => $ui_relevant_fields[$field_name]->getLabel(),
+                'value' => $value,
+              ];
+            }
+          }
+    
+          // Pass the filtered and sorted other relevant info fields to the template.
+          $variables['ui_relevant_fields'] = $ordered_relevant_fields;
+        } else {
+          \Drupal::logger('bootstrap5')->error('Display settings for Other Relevant Info could not be loaded.');
+        }
+      } else {
+        \Drupal::logger('bootstrap5')->error('Other Relevant Info entity could not be loaded.');
+      }
+    }
+    
+    // Initialize an array to store all the data.
+    $data = [];
+
+    // Define the field mappings for each data type.
+    $field_mappings = [
+      'field_academic_qualification_ref' => [
+        'target_field' => 'field_academic_qualification',
+        'target_type' => 'education_',
+        'target_view_mode' => 'default1',
+        'result_key' => 'academic_qualifications',
+      ],
+      // 'field_other_relevant_info_ref' => [
+      //     'target_field' => 'field_other_relevant_information',
+      //     'target_type' => 'other_relevant_information',
+      //     'target_view_mode' => 'default1',
+      //     'result_key' => 'other_relevant_information',
+      // ],
+      'field_list_of_referees_ref' => [
+        'target_field' => 'field_list_of_referees_',
+        'target_type' => 'referee_details',
+        'target_view_mode' => 'default1',
+        'result_key' => 'referee_details',
+      ],
+      'field_update_publications_ref' => [
+        'target_field' => 'field_update_publications',
+        'target_type' => 'publications',
+        'target_view_mode' => 'default1',
+        'result_key' => 'publications',
+      ],
+      'field_research_proposal_ref' => [
+        'target_field' => 'field_research_proposal',
+        'target_type' => 'research_proposals',
+        'target_view_mode' => 'default1',
+        'result_key' => 'research_proposals',
+      ],
+    ];
+
+    // Process each field type dynamically.
+    foreach ($field_mappings as $field_name => $mapping) {
+      if ($node->hasField($field_name) && !$node->get($field_name)->isEmpty()) {
+        $ref_node = $node->get($field_name)->entity;
+
+        // Check if the referenced node is loaded.
+        if ($ref_node && $ref_node->hasField($mapping['target_field']) && !$ref_node->get($mapping['target_field'])->isEmpty()) {
+          $paragraphs = $ref_node->get($mapping['target_field'])->referencedEntities();
+
+          // Build the display ID.
+          $display_id = 'paragraph.' . $mapping['target_type'] . '.' . $mapping['target_view_mode'];
+
+          // Attempt to load the display configuration for the paragraph entity type.
+          $display = \Drupal::entityTypeManager()->getStorage('entity_view_display')->load($display_id);
+
+          if ($display) {
+            // Get the ordered list of fields from the display settings and sort by weight.
+            $ordered_fields = $display->getComponents();
+            uasort($ordered_fields, function ($a, $b) {
+              return $a['weight'] <=> $b['weight'];
+            });
+
+            // Iterate through each paragraph entity and get its fields in the same order as in the display settings.
+            foreach ($paragraphs as $paragraph) {
+              $paragraph_data = [];
+
+              // Get all fields from the paragraph entity in the same order as in the display settings.
+              foreach ($ordered_fields as $field_name => $settings) {
+                // Only include fields that start with 'field_'.
+                if ($paragraph->hasField($field_name) && strpos($field_name, 'field_') === 0) {
+                  $field = $paragraph->get($field_name);
+                  $field_definition = $field->getFieldDefinition();
+                  $field_type = $field_definition->getType();
+
+                  // Handle file and image fields separately.
+                  if ($field_type == 'file' || $field_type == 'image') {
+                    $paragraph_data[$field_name] = [
+                      'label' => $field_definition->getLabel(),
+                      'value' => $field->view(['label' => 'hidden']),
+                    ];
+                  } elseif ($field_type == 'list_string') {
+                    $values = [];
+                    foreach ($field->getValue() as $item) {
+                      $values[] = $item['value'];
+                    }
+                    $value = implode(', ', $values);
+                    $paragraph_data[$field_name] = [
+                      'label' => $field_definition->getLabel(),
+                      'value' => $value,
+                    ];
+                  } else {
+                    $paragraph_data[$field_name] = [
+                      'label' => $field_definition->getLabel(),
+                      'value' => $field->value,
+                    ];
+                  }
+                }
+              }
+
+              // Add the paragraph data to the result array.
+              $data[$mapping['result_key']][] = $paragraph_data;
+            }
+          } else {
+            \Drupal::logger('bootstrap5')->error('The display configuration for @display_id could not be loaded.', ['@display_id' => $display_id]);
+          }
+        }
+      }
+    }
+
+    // Pass all the data to the Twig template.
+    $variables['data'] = $data;
+    \Drupal::service('cache.render')->invalidateAll();
+    \Drupal::service('page_cache_kill_switch')->trigger();
+  } else {
+    \Drupal::logger('bootstrap5')->error('Node is not set in the variables.');
+  }
+  if (isset($variables['node'])) {
+    $node = $variables['node'];
+    $current_user = \Drupal::currentUser();
+
+    // Pass user roles and name to the template.
+    $variables['user_roles'] = $current_user->getRoles();
+    $variables['current_user_name'] = $current_user->getAccountName();
+
+    // Collect comments data.
+    $variables['comments'] = [
+      'field_admin_comment_reference' => $node->get('field_admin_comment_reference')->referencedEntities(),
+      'field_board_member_comment_refer' => $node->get('field_board_member_comment_refer')->referencedEntities(),
+      'field_dean_comment_reference' => $node->get('field_dean_comment_reference')->referencedEntities(),
+      'field_director_comment_reference' => $node->get('field_director_comment_reference')->referencedEntities(),
+      'field_assessment_committee_coref' => $node->get('field_assessment_committee_coref')->referencedEntities(),
+      'field_faculty_member_comment_ref' => $node->get('field_faculty_member_comment_ref')->referencedEntities(),
+      'field_faculty_search_comit_coref' => $node->get('field_faculty_search_comit_coref')->referencedEntities(),
+      'field_promotion_committee_coref' => $node->get('field_promotion_committee_coref')->referencedEntities(),
+      'field_yip_search_committee_coref' => $node->get('field_yip_search_committee_coref')->referencedEntities(),
+    ];
+  }
+}

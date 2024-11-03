@@ -1,0 +1,389 @@
+{# node--submit-application.html.twig #}
+<br>
+<br>
+
+<!-- Custom CSS for the tabs and table styles -->
+<style>
+  /* Remove outer border of tables, but keep inner borders */
+  .table {
+    border-collapse: collapse;
+    width: 100%;
+    table-layout: fixed; /* Ensure all cells have equal width */
+  }
+
+  .table th, .table td {
+    border: 1px solid #dee2e6;
+    padding: 0.75rem;
+    text-align: left;
+    word-wrap: break-word; /* Ensure long content wraps within the cell */
+  }
+
+  .table th {
+    background-color: #f8f9fa;
+    font-weight: bold;
+  }
+
+  /* Custom styles for the tabs */
+  .custom-tabs .nav-link {
+    display: block;
+    padding: 0.75rem 1.5rem;
+    color: #495057;
+    text-align: center;
+    border: 1px solid #dee2e6;
+    border-bottom-color: transparent;
+    background-color: #f8f9fa;
+    transition: background-color 0.3s, border-color 0.3s;
+    white-space: nowrap;
+    font-size: 1rem;
+    margin-right: -1px;
+  }
+
+  /* Hover and focus states for tabs */
+  .custom-tabs .nav-link:hover, .custom-tabs .nav-link:focus {
+    background-color: #e9ecef;
+    border-color: #dee2e6;
+  }
+
+  /* Active tab styling */
+  .custom-tabs .nav-link.active {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+    border-bottom-color: white;
+    border-radius: 0.25rem 0.25rem 0 0;
+  }
+
+  /* Full-width styling for tab content */
+  .tab-content {
+    border: 1px solid #dee2e6;
+    padding: 1rem;
+    border-top: none;
+    background-color: white;
+  }
+
+  /* Flexbox to make tabs equal width */
+  .custom-tabs {
+    display: flex;
+    margin-bottom: 0;
+  }
+
+  /* Ensure all table columns have equal width */
+  .table th, .table td {
+    width: 50%; /* You can adjust this to 33% or other values depending on the table structure */
+  }
+</style>
+
+
+<!-- Tab Navigation with custom class -->
+<ul class="nav nav-tabs custom-tabs" id="infoTab" role="tablist">
+  <!-- Basic Information Tab -->
+  <li class="nav-item" role="presentation">
+    <button class="nav-link active" id="basic-info-tab" data-bs-toggle="tab" data-bs-target="#basic-info" type="button" role="tab" aria-controls="basic-info" aria-selected="true">Basic Information</button>
+  </li>
+  
+  <!-- Academic Qualification Tab -->
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="academic-qualification-tab" data-bs-toggle="tab" data-bs-target="#academic-qualification" type="button" role="tab" aria-controls="academic-qualification" aria-selected="false">Academic Qualification</button>
+  </li>
+
+  <!-- Other Relevant Information Tab -->
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="relevant-info-tab" data-bs-toggle="tab" data-bs-target="#relevant-info" type="button" role="tab" aria-controls="relevant-info" aria-selected="false">Other Relevant Information</button>
+  </li>
+
+  <!-- Referee Details Tab -->
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="referee-details-tab" data-bs-toggle="tab" data-bs-target="#referee-details" type="button" role="tab" aria-controls="referee-details" aria-selected="false">Referee Details</button>
+  </li>
+
+  <!-- Publications Tab -->
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="publications-tab" data-bs-toggle="tab" data-bs-target="#publications" type="button" role="tab" aria-controls="publications" aria-selected="false">Publications</button>
+  </li>
+
+  <!-- Research Proposals Tab -->
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="research-proposals-tab" data-bs-toggle="tab" data-bs-target="#research-proposals" type="button" role="tab" aria-controls="research-proposals" aria-selected="false">Research Proposals</button>
+  </li>
+</ul>
+
+<!-- Tab Content -->
+<div class="tab-content" id="infoTabContent">
+  <!-- Basic Information Content -->
+  <div class="tab-pane fade show active" id="basic-info" role="tabpanel" aria-labelledby="basic-info-tab">
+    <div class="table-responsive">
+      <table class="table">
+        <tbody>
+          {% if ui_basic_fields %}
+            {% for field_name, field_data in ui_basic_fields %}
+              <tr>
+                <th>{{ field_data.label }}</th>
+                <td>
+                  {% if field_data.value is iterable %}
+                    {{ field_data.value|render }}
+                  {% else %}
+                    {{ field_data.value is not empty ? field_data.value : '' }}
+                  {% endif %}
+                </td>
+              </tr>
+            {% endfor %}
+          {% else %}
+            <p>No Basic Information found.</p>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Academic Qualification Content -->
+  <div class="tab-pane fade" id="academic-qualification" role="tabpanel" aria-labelledby="academic-qualification-tab">
+    <div class="table-responsive">
+      <table class="table">
+        <tbody>
+          {% if data.academic_qualifications %}
+            {% for qualification in data.academic_qualifications %}
+              {% for field in qualification %}
+                <tr>
+                  <th style="width: 50%;">{{ field.label }}</th>
+                  <td style="width: 50%;">{{ field.value }}</td>
+                </tr>
+              {% endfor %}
+            {% endfor %}
+          {% else %}
+            <p>No academic qualifications found.</p>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Other Relevant Information Content -->
+  <div class="tab-pane fade" id="relevant-info" role="tabpanel" aria-labelledby="relevant-info-tab">
+    <div class="table-responsive">
+      <table class="table">
+        <tbody>
+          {% if ui_relevant_fields %}
+            {% for field_name, field_data in ui_relevant_fields %}
+              <tr>
+                <th>{{ field_data.label }}</th>
+                <td>
+                  {% if field_data.value is iterable %}
+                    {{ field_data.value|render }}
+                  {% else %}
+                    {{ field_data.value is not empty ? field_data.value : '' }}
+                  {% endif %}
+                </td>
+              </tr>
+            {% endfor %}
+          {% else %}
+            <p>No Other Relevant Information found.</p>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Referee Details Content -->
+  <div class="tab-pane fade" id="referee-details" role="tabpanel" aria-labelledby="referee-details-tab">
+    <div class="table-responsive">
+      <table class="table">
+        <tbody>
+          {% if data.referee_details %}
+            {% for referee in data.referee_details %}
+              {% for field in referee %}
+                <tr>
+                  <th style="width: 50%;">{{ field.label }}</th>
+                  <td style="width: 50%;">{{ field.value }}</td>
+                </tr>
+              {% endfor %}
+            {% endfor %}
+          {% else %}
+            <p>No referee details found.</p>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Publications Content -->
+  <div class="tab-pane fade" id="publications" role="tabpanel" aria-labelledby="publications-tab">
+    <div class="table-responsive">
+      <table class="table">
+        <tbody>
+          {% if data.publications %}
+            {% for publication in data.publications %}
+              {% for field in publication %}
+                <tr>
+                  <th style="width: 50%;">{{ field.label }}</th>
+                  <td style="width: 50%;">{{ field.value }}</td>
+                </tr>
+              {% endfor %}
+            {% endfor %}
+          {% else %}
+            <p>No publications found.</p>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Research Proposals Content -->
+  <div class="tab-pane fade" id="research-proposals" role="tabpanel" aria-labelledby="research-proposals-tab">
+    <div class="table-responsive">
+      <table class="table">
+        <tbody>
+          {% if data.research_proposals %}
+            {% for proposal in data.research_proposals %}
+              {% for field in proposal %}
+                <tr>
+                  <th style="width: 50%;">{{ field.label }}</th>
+                  <td style="width: 50%;">{{ field.value|render }}</td>
+                </tr>
+              {% endfor %}
+            {% endfor %}
+          {% else %}
+            <p>No research proposals found.</p>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Include Bootstrap JS if not already included -->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.min.js"></script>
+
+
+
+<br>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{# Define CSS styles for fixed table layout with borders #}
+<style>
+  .fixed-table {
+    table-layout: fixed;
+    width: 100%;
+    border-collapse: collapse; /* Ensures borders are merged into a single border */
+  }
+  .fixed-table th, .fixed-table td {
+    width: 33.33%;
+    border: 1px solid #ddd; /* Light gray border for cells */
+    text-align: center; /* Center text in cells */
+    padding: 8px; /* Add padding for spacing */
+  }
+  .fixed-table th {
+    background-color: #f8f9fa; /* Light gray background for header cells */
+    color: #333; /* Dark text color for readability */
+  }
+  .fixed-table .table-success {
+    background-color: #d4edda; /* Bootstrap's success color for the title */
+    color: #155724; /* Dark green text color for the title */
+  }
+</style>
+
+
+{% macro renderCommentTable(title, comments) %}
+  <table class="table fixed-table">
+    <thead>
+      <tr>
+        <th class="table-success" colspan="3" style="text-align: center;">{{ title }}</th>
+      </tr>
+      {% if comments|length > 0 %}
+        <tr>
+          <th>Name</th>
+          <th>Date</th>
+          <th>Comments</th>
+        </tr>
+      {% endif %}
+    </thead>
+    <tbody>
+      {% if comments|length > 0 %}
+        {# Step 1: Collect and store comments with dates in an array #}
+        {% set comment_data = [] %}
+        {% for comment in comments %}
+          {# Assuming comments have 'field_comment_name', 'field_comment_date', and 'field_add_comments' fields #}
+          {% if comment.field_add_comments|length > 0 and comment.field_comment_date|length > 0 %}
+            {% for index in (comment.field_add_comments|length - 1)..0 %}
+              {% set comment_data = comment_data|merge([{ 
+                'name': comment.field_comment_name.value, 
+                'date': comment.field_comment_date[index].value, 
+                'comment': comment.field_add_comments[index].value 
+              }]) %}
+            {% endfor %}
+          {% endif %}
+        {% endfor %}
+
+        {# Step 2: Sort the array manually by date (latest first) using string comparison #}
+        {% set sorted_comments = comment_data|sort((a, b) => b.date <=> a.date) %}
+
+        {# Step 3: Render the sorted comments #}
+        {% for comment in sorted_comments %}
+          <tr>
+            <td>{{ comment.name }}</td>
+            <td>{{ comment.date }}</td>
+            <td>{{ comment.comment }}</td>
+          </tr>
+        {% endfor %}
+      {% else %}
+        <tr>
+          <td colspan="3" style="text-align: center;">No data available.</td>
+        </tr>
+      {% endif %}
+    </tbody>
+  </table>
+{% endmacro %}
+
+
+
+
+
+{% if 'administrator' in user_roles or 'director' in user_roles or 'admin' in user_roles %}
+  {{ _self.renderCommentTable("Director Comments", comments.field_director_comment_reference) }}
+{% endif %}
+
+{% if 'administrator' in user_roles or 'dean' in user_roles or 'admin' in user_roles %}
+  {{ _self.renderCommentTable("Dean's Comments", comments.field_dean_comment_reference) }}
+{% endif %}
+
+{% if 'administrator' in user_roles or 'board_member' in user_roles or 'admin' in user_roles %}
+  {{ _self.renderCommentTable("Board Member Comments", comments.field_board_member_comment_refer) }}
+{% endif %}
+
+{% if 'administrator' in user_roles or 'admin' in user_roles %}
+  {{ _self.renderCommentTable("Admin Comments", comments.field_admin_comment_reference) }}
+{% endif %}
+
+{% if 'administrator' in user_roles or 'faculty_search_committee' in user_roles or 'admin' in user_roles %}
+  {{ _self.renderCommentTable("Faculty Search Committee Comments", comments.field_faculty_search_comit_coref) }}
+{% endif %}
+
+{% if 'administrator' in user_roles or 'yip_search_committee' in user_roles or 'admin' in user_roles %}
+  {{ _self.renderCommentTable("YIP Search Committee Comments", comments.field_yip_search_committee_coref) }}
+{% endif %}
+
+{% if 'administrator' in user_roles or 'faculty_member' in user_roles or 'admin' in user_roles %}
+  {{ _self.renderCommentTable("Faculty Member Comments", comments.field_faculty_member_comment_ref) }}
+{% endif %}
+
+{% if 'administrator' in user_roles or 'assessment_committee' in user_roles or 'admin' in user_roles %}
+  {{ _self.renderCommentTable("Assessment Committee Comments", comments.field_assessment_committee_coref) }}
+{% endif %}
+
+{% if 'administrator' in user_roles or 'promotion_committee' in user_roles or 'admin' in user_roles %}
+  {{ _self.renderCommentTable("Promotion Committee Comments", comments.field_promotion_committee_coref) }}
+{% endif %}

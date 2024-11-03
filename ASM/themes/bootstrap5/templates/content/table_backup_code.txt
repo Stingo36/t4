@@ -1,0 +1,752 @@
+node--submit-application.html.twig
+
+
+
+{# node--submit-application.html.twig #}
+<div class="accordion" id="infoAccordion">
+  <!-- Basic Information Section -->
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="headingBasicInfo">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseBasicInfo" aria-expanded="false" aria-controls="collapseBasicInfo">
+        Basic Information
+      </button>
+    </h2>
+    <div id="collapseBasicInfo" class="accordion-collapse collapse" aria-labelledby="headingBasicInfo" data-bs-parent="#infoAccordion">
+      <div class="accordion-body">
+        <table class="table table-responsive fixed-table">
+          <tbody>
+          {% if ui_basic_fields %}
+            {% for field_name, field_data in ui_basic_fields %}
+              <tr>
+                <th>{{ field_data.label }}</th>
+                <td>
+                  {% if field_data.value is iterable %}
+                    {{ field_data.value|render }}
+                  {% else %}
+                    {{ field_data.value is not empty ? field_data.value : '' }}
+                  {% endif %}
+                </td>
+              </tr>
+            {% endfor %}
+          {% else %}
+            <p>No Basic Information found.</p>
+          {% endif %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Academic Qualification Section -->
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="headingAcademicQualification">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseAcademicQualification" aria-expanded="false" aria-controls="collapseAcademicQualification">
+            Academic Qualification
+        </button>
+    </h2>
+    <div id="collapseAcademicQualification" class="accordion-collapse collapse" aria-labelledby="headingAcademicQualification" data-bs-parent="#infoAccordion">
+        <div class="accordion-body">
+            {% if data.academic_qualifications %}
+                <div class="academic-qualification">
+                    {% for qualification in data.academic_qualifications %}
+                        <div class="table-responsive">
+                            <table class="table">
+                                <tbody>
+                                    {% for field in qualification %}
+                                        <tr>
+                                            <th style="width: 50%;">{{ field.label }}</th>
+                                            <td style="width: 50%;">{{ field.value }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p>No academic qualifications found.</p>
+            {% endif %}
+        </div>
+    </div>
+  </div>
+
+  <!-- Other Relevant Information Section -->
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="headingOtherRelevantInfo">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOtherRelevantInfo" aria-expanded="false" aria-controls="collapseOtherRelevantInfo">
+        Other Relevant Information
+      </button>
+    </h2>
+    <div id="collapseOtherRelevantInfo" class="accordion-collapse collapse" aria-labelledby="headingOtherRelevantInfo" data-bs-parent="#infoAccordion">
+      <div class="accordion-body">
+        <table class="table table-responsive fixed-table">
+          <tbody>
+          {% if ui_relevant_fields %}
+            {% for field_name, field_data in ui_relevant_fields %}
+              <tr>
+                <th>{{ field_data.label }}</th>
+                <td>
+                  {% if field_data.value is iterable %}
+                    {{ field_data.value|render }}
+                  {% else %}
+                    {{ field_data.value is not empty ? field_data.value : '' }}
+                  {% endif %}
+                </td>
+              </tr>
+            {% endfor %}
+          {% else %}
+            <p>No Other Relevant Information found.</p>
+          {% endif %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Referee Details Section -->
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="headingRefereeDetails">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRefereeDetails" aria-expanded="true" aria-controls="collapseRefereeDetails">
+            Referee Details
+        </button>
+    </h2>
+    <div id="collapseRefereeDetails" class="accordion-collapse collapse show" aria-labelledby="headingRefereeDetails" data-bs-parent="#infoAccordion">
+        <div class="accordion-body">
+            {% if data.referee_details %}
+                <div class="referee-details">
+                    {% for referee in data.referee_details %}
+                        <div class="table-responsive">
+                            <table class="table">
+                                <tbody>
+                                    {% for field in referee %}
+                                        <tr>
+                                            <th style="width: 50%;">{{ field.label }}</th>
+                                            <td style="width: 50%;">{{ field.value }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p>No referee details found.</p>
+            {% endif %}
+        </div>
+    </div>
+  </div>
+
+  <!-- Publications Section -->
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="headingPublications">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePublications" aria-expanded="false" aria-controls="collapsePublications">
+            Publications
+        </button>
+    </h2>
+    <div id="collapsePublications" class="accordion-collapse collapse" aria-labelledby="headingPublications" data-bs-parent="#infoAccordion">
+        <div class="accordion-body">
+            {% if data.publications %}
+                <div class="publications">
+                    {% for publication in data.publications %}
+                        <div class="table-responsive">
+                            <table class="table">
+                                <tbody>
+                                    {% for field in publication %}
+                                        <tr>
+                                            <th style="width: 50%;">{{ field.label }}</th>
+                                            <td style="width: 50%;">{{ field.value }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p>No publications found.</p>
+            {% endif %}
+        </div>
+    </div>
+  </div>
+
+  <!-- Research Proposals Section -->
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="headingResearchProposals">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseResearchProposals" aria-expanded="true" aria-controls="collapseResearchProposals">
+            Research Proposals
+        </button>
+    </h2>
+    <div id="collapseResearchProposals" class="accordion-collapse collapse show" aria-labelledby="headingResearchProposals" data-bs-parent="#infoAccordion">
+        <div class="accordion-body">
+            {% if data.research_proposals %}
+                <div class="research-proposals">
+                    {% for proposal in data.research_proposals %}
+                        <div class="table-responsive">
+                            <table class="table">
+                                <tbody>
+                                    {% for field in proposal %}
+                                        <tr>
+                                            <th style="width: 50%;">{{ field.label }}</th>
+                                            <td style="width: 50%;">{{ field.value|render }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p>No research proposals found.</p>
+            {% endif %}
+        </div>
+    </div>
+  </div>
+</div>
+<br>
+{# Define CSS styles for fixed table layout with borders #}
+<style>
+  .fixed-table {
+    table-layout: fixed;
+    width: 100%;
+    border-collapse: collapse; /* Ensures borders are merged into a single border */
+  }
+  .fixed-table th, .fixed-table td {
+    width: 33.33%;
+    border: 1px solid #ddd; /* Light gray border for cells */
+    text-align: center; /* Center text in cells */
+    padding: 8px; /* Add padding for spacing */
+  }
+  .fixed-table th {
+    background-color: #f8f9fa; /* Light gray background for header cells */
+    color: #333; /* Dark text color for readability */
+  }
+  .fixed-table .table-success {
+    background-color: #d4edda; /* Bootstrap's success color for the title */
+    color: #155724; /* Dark green text color for the title */
+  }
+</style>
+{% macro renderCommentTable(title, comments) %}
+  <table class="table fixed-table">
+    <thead>
+      <tr>
+        <th class="table-success" colspan="3" style="text-align: center;">{{ title }}</th>
+      </tr>
+      {% if comments|length > 0 %}
+        <tr>
+          <th>Name</th>
+          <th>Date</th>
+          <th>Comments</th>
+        </tr>
+      {% endif %}
+    </thead>
+    <tbody>
+      {% if comments|length > 0 %}
+        {% for comment in comments %}
+          <tr>
+            <td>{{ comment.field_comment_name.value }}</td>
+            <td>{{ comment.field_comment_date.value }}</td>
+            <td>{{ comment.field_add_comments.value }}</td>
+          </tr>
+        {% endfor %}
+      {% else %}
+        <tr>
+          <td colspan="3" style="text-align: center;">No data available.</td>
+        </tr>
+      {% endif %}
+    </tbody>
+  </table>
+{% endmacro %}
+
+{% if 'administrator' in user_roles or 'dean' in user_roles %}
+  {{ _self.renderCommentTable("Dean's Comments", comments.field_dean_comment_reference) }}
+{% endif %}
+
+{% if 'administrator' in user_roles or 'board_member' in user_roles %}
+  {{ _self.renderCommentTable("Board Member Comments", comments.field_board_member_comment_refer) }}
+{% endif %}
+
+{% if 'administrator' in user_roles %}
+  {{ _self.renderCommentTable("Admin Comments", comments.field_admin_comment_reference) }}
+{% endif %}
+
+{% if 'administrator' in user_roles or 'director' in user_roles %}
+  {{ _self.renderCommentTable("Director Comments", comments.field_director_comment_reference) }}
+{% endif %}
+
+
+
+
+
+
+
+bootstrap5.theme
+
+
+/**
+ * Implements hook_preprocess_node__submit_application().
+ */
+function bootstrap5_preprocess_node__submit_application(&$variables)
+{
+  // Check if the node exists before proceeding.
+  if (isset($variables['node'])) {
+    $node = $variables['node'];
+
+    // Check if the field exists and is not empty.
+    if ($node->hasField('field_basic_information_referenc') && !$node->get('field_basic_information_referenc')->isEmpty()){
+      // Load the referenced basic_information entity.
+      $basic_information = $node->field_basic_information_referenc->entity;
+
+      // Check if the basic_information entity is loaded.
+      if ($basic_information) {
+        // Get the field definitions for the basic_information entity.
+        $basic_fields = $basic_information->getFieldDefinitions();
+
+        // Filter the fields to include only those in the 'basic_information' bundle.
+        $ui_basic_fields = array_filter($basic_fields, function ($field_definition) {
+          return $field_definition->getTargetBundle() == 'basic_information';
+        });
+
+        // Get the weight order from the 'manage display' settings for basic information.
+        $basic_display = \Drupal::entityTypeManager()->getStorage('entity_view_display')
+          ->load('node.basic_information.full');
+        $basic_components = $basic_display->getComponents();
+        uasort($basic_components, function ($a, $b) {
+          return $a['weight'] <=> $b['weight'];
+        });
+
+        // Extract labels and values for basic information in the correct weight order.
+        $ordered_basic_fields = [];
+        foreach ($basic_components as $field_name => $display_options) {
+          if (isset($ui_basic_fields[$field_name])) {
+            $field = $basic_information->get($field_name);
+            if ($field->getFieldDefinition()->getType() == 'image' || $field->getFieldDefinition()->getType() == 'file') {
+              $value = $field->view(['label' => 'hidden']);
+            } else {
+              $value = $field->value;
+            }
+            $ordered_basic_fields[$field_name] = [
+              'label' => $ui_basic_fields[$field_name]->getLabel(),
+              'value' => $value,
+            ];
+          }
+        }
+
+        // Pass the filtered and sorted basic information fields to the template.
+        $variables['ui_basic_fields'] = $ordered_basic_fields;
+      } else {
+        \Drupal::logger('bootstrap5')->error('Basic Information entity could not be loaded.');
+      }
+    }
+
+    if ($node->hasField('field_other_relevant_info_ref') && !$node->get('field_other_relevant_info_ref')->isEmpty()) {
+      // Load the referenced other_relevant_info entity.
+      $other_relevant_info = $node->field_other_relevant_info_ref->entity;
+    
+      // Check if the other_relevant_info entity is loaded.
+      if ($other_relevant_info) {
+        // Get the field definitions for the other_relevant_info entity.
+        $relevant_fields = $other_relevant_info->getFieldDefinitions();
+    
+        // Filter the fields to include only those in the 'other_relevant_information' bundle.
+        $ui_relevant_fields = array_filter($relevant_fields, function ($field_definition) {
+          return $field_definition->getTargetBundle() == 'other_relevant_information';
+        });
+    
+        // Get the weight order from the 'manage display' settings for other relevant info.
+        $relevant_display = \Drupal::entityTypeManager()->getStorage('entity_view_display')
+          ->load('node.other_relevant_information.full');
+    
+        if ($relevant_display) {
+          $relevant_components = $relevant_display->getComponents();
+          uasort($relevant_components, function ($a, $b) {
+            return $a['weight'] <=> $b['weight'];
+          });
+    
+          // Extract labels and values for other relevant info in the correct weight order.
+          $ordered_relevant_fields = [];
+          foreach ($relevant_components as $field_name => $display_options) {
+            if (isset($ui_relevant_fields[$field_name])) {
+              $field = $other_relevant_info->get($field_name);
+              
+              // Check if the field is a list field and get all values if so.
+              if ($field->getFieldDefinition()->getType() == 'list_string') {
+                $values = [];
+                foreach ($field as $item) {
+                  $values[] = $item->value;
+                }
+                $value = implode(', ', $values);
+              } else {
+                $value = $field->value;
+              }
+              
+              $ordered_relevant_fields[$field_name] = [
+                'label' => $ui_relevant_fields[$field_name]->getLabel(),
+                'value' => $value,
+              ];
+            }
+          }
+    
+          // Pass the filtered and sorted other relevant info fields to the template.
+          $variables['ui_relevant_fields'] = $ordered_relevant_fields;
+        } else {
+          \Drupal::logger('bootstrap5')->error('Display settings for Other Relevant Info could not be loaded.');
+        }
+      } else {
+        \Drupal::logger('bootstrap5')->error('Other Relevant Info entity could not be loaded.');
+      }
+    }
+    
+    // Initialize an array to store all the data.
+    $data = [];
+
+    // Define the field mappings for each data type.
+    $field_mappings = [
+      'field_academic_qualification_ref' => [
+        'target_field' => 'field_academic_qualification',
+        'target_type' => 'education_',
+        'target_view_mode' => 'default1',
+        'result_key' => 'academic_qualifications',
+      ],
+      // 'field_other_relevant_info_ref' => [
+      //     'target_field' => 'field_other_relevant_information',
+      //     'target_type' => 'other_relevant_information',
+      //     'target_view_mode' => 'default1',
+      //     'result_key' => 'other_relevant_information',
+      // ],
+      'field_list_of_referees_ref' => [
+        'target_field' => 'field_list_of_referees_',
+        'target_type' => 'referee_details',
+        'target_view_mode' => 'default1',
+        'result_key' => 'referee_details',
+      ],
+      'field_update_publications_ref' => [
+        'target_field' => 'field_update_publications',
+        'target_type' => 'publications',
+        'target_view_mode' => 'default1',
+        'result_key' => 'publications',
+      ],
+      'field_research_proposal_ref' => [
+        'target_field' => 'field_research_proposal',
+        'target_type' => 'research_proposals',
+        'target_view_mode' => 'default1',
+        'result_key' => 'research_proposals',
+      ],
+    ];
+
+    // Process each field type dynamically.
+    foreach ($field_mappings as $field_name => $mapping) {
+      if ($node->hasField($field_name) && !$node->get($field_name)->isEmpty()) {
+        $ref_node = $node->get($field_name)->entity;
+
+        // Check if the referenced node is loaded.
+        if ($ref_node && $ref_node->hasField($mapping['target_field']) && !$ref_node->get($mapping['target_field'])->isEmpty()) {
+          $paragraphs = $ref_node->get($mapping['target_field'])->referencedEntities();
+
+          // Build the display ID.
+          $display_id = 'paragraph.' . $mapping['target_type'] . '.' . $mapping['target_view_mode'];
+
+          // Attempt to load the display configuration for the paragraph entity type.
+          $display = \Drupal::entityTypeManager()->getStorage('entity_view_display')->load($display_id);
+
+          if ($display) {
+            // Get the ordered list of fields from the display settings and sort by weight.
+            $ordered_fields = $display->getComponents();
+            uasort($ordered_fields, function ($a, $b) {
+              return $a['weight'] <=> $b['weight'];
+            });
+
+            // Iterate through each paragraph entity and get its fields in the same order as in the display settings.
+            foreach ($paragraphs as $paragraph) {
+              $paragraph_data = [];
+
+              // Get all fields from the paragraph entity in the same order as in the display settings.
+              foreach ($ordered_fields as $field_name => $settings) {
+                // Only include fields that start with 'field_'.
+                if ($paragraph->hasField($field_name) && strpos($field_name, 'field_') === 0) {
+                  $field = $paragraph->get($field_name);
+                  $field_definition = $field->getFieldDefinition();
+                  $field_type = $field_definition->getType();
+
+                  // Handle file and image fields separately.
+                  if ($field_type == 'file' || $field_type == 'image') {
+                    $paragraph_data[$field_name] = [
+                      'label' => $field_definition->getLabel(),
+                      'value' => $field->view(['label' => 'hidden']),
+                    ];
+                  } elseif ($field_type == 'list_string') {
+                    $values = [];
+                    foreach ($field->getValue() as $item) {
+                      $values[] = $item['value'];
+                    }
+                    $value = implode(', ', $values);
+                    $paragraph_data[$field_name] = [
+                      'label' => $field_definition->getLabel(),
+                      'value' => $value,
+                    ];
+                  } else {
+                    $paragraph_data[$field_name] = [
+                      'label' => $field_definition->getLabel(),
+                      'value' => $field->value,
+                    ];
+                  }
+                }
+              }
+
+              // Add the paragraph data to the result array.
+              $data[$mapping['result_key']][] = $paragraph_data;
+            }
+          } else {
+            \Drupal::logger('bootstrap5')->error('The display configuration for @display_id could not be loaded.', ['@display_id' => $display_id]);
+          }
+        }
+      }
+    }
+
+    // Pass all the data to the Twig template.
+    $variables['data'] = $data;
+    \Drupal::service('cache.render')->invalidateAll();
+    \Drupal::service('page_cache_kill_switch')->trigger();
+  } else {
+    \Drupal::logger('bootstrap5')->error('Node is not set in the variables.');
+  }
+  if (isset($variables['node'])) {
+    $node = $variables['node'];
+    $current_user = \Drupal::currentUser();
+
+    // Pass user roles and name to the template.
+    $variables['user_roles'] = $current_user->getRoles();
+    $variables['current_user_name'] = $current_user->getAccountName();
+
+    // Collect comments data.
+    $variables['comments'] = [
+      'field_admin_comment_reference' => $node->get('field_admin_comment_reference')->referencedEntities(),
+      'field_board_member_comment_refer' => $node->get('field_board_member_comment_refer')->referencedEntities(),
+      'field_dean_comment_reference' => $node->get('field_dean_comment_reference')->referencedEntities(),
+      'field_director_comment_reference' => $node->get('field_director_comment_reference')->referencedEntities(),
+    ];
+  }
+}
+
+
+
+
+
+
+
+AddComments.inc file
+
+
+
+
+<?php
+
+use Drupal\node\Entity\Node;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Messenger\MessengerInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
+
+/**
+ * Adds a reference to the node in the appropriate comment reference field.
+ * Sets 'field_comment_date' to the current date and time, and 'field_comment_name' to the author's name.
+ *
+ * @param \Drupal\node\Entity\Node $node
+ *   The node to be referenced.
+ * @param \Drupal\Core\Session\AccountInterface $account
+ *   The current user account.
+ * @param \Drupal\Core\Messenger\MessengerInterface $messenger
+ *   The messenger service.
+ * @param \Symfony\Component\HttpFoundation\RequestStack $request_stack
+ *   The request stack service.
+ *
+ * @return bool
+ *   TRUE if the operation was successful, FALSE otherwise.
+ */
+function addCommentByRole(Node $node, AccountInterface $account, MessengerInterface $messenger, RequestStack $request_stack) {
+  // Check if the node's content type is 'add_comments'.
+  if ($node->bundle() == 'add_comments') {
+    $messenger->addMessage('Content type is "add_comments".');
+
+    // Get the current request to extract the nid from the URL.
+    $request = $request_stack->getCurrentRequest();
+    $referenced_nid = $request->query->get('nid');
+
+    if ($referenced_nid) {
+      // Load the referenced node by nid.
+      $referenced_node = Node::load($referenced_nid);
+
+      if ($referenced_node) {
+        // Get the user's roles and log them for debugging.
+        $user_roles = $account->getRoles();
+        $messenger->addMessage('User Roles: ' . implode(', ', $user_roles));
+
+        // Determine the field based on the user's role.
+        $field_name = '';
+        if (in_array('board_member', $user_roles)) {
+          $field_name = 'field_board_member_comment_refer';
+          $messenger->addMessage('Role: Board Member.');
+        } elseif (in_array('administrator', $user_roles)) {
+          $field_name = 'field_admin_comment_reference';
+          $messenger->addMessage('Role: administrator');
+        } elseif (in_array('dean', $user_roles)) {
+          $field_name = 'field_dean_comment_reference';
+          $messenger->addMessage('Role: Dean.');
+        } elseif (in_array('director', $user_roles)) {
+          $field_name = 'field_director_comment_reference';
+          $messenger->addMessage('Role: Director.');
+        } else {
+          $messenger->addMessage('Current user does not have a recognized role for commenting.');
+        }
+
+        if ($field_name) {
+          // Add the current node as a reference in the appropriate field.
+          $referenced_field = $referenced_node->get($field_name);
+          $referenced_field->appendItem($node->id());
+          $referenced_node->save();
+
+
+          $node->save();
+
+          $messenger->addMessage('Node reference saved in "' . $field_name . '".');
+          $messenger->addMessage('Comment date and author name saved.');
+          return TRUE;
+        } else {
+          // If no recognized role is found, return FALSE.
+          return FALSE;
+        }
+      } else {
+        $messenger->addMessage('Referenced node with nid ' . $referenced_nid . ' does not exist.');
+        return FALSE;
+      }
+    } else {
+      $messenger->addMessage('No node ID (nid) provided in the URL.');
+      return FALSE;
+    }
+  } else {
+    $messenger->addMessage('Content type is not "add_comments".');
+    return FALSE;
+  }
+}
+
+
+
+
+ncbs.module file 
+
+
+
+/**
+ * Implements hook_entity_insert().
+ * !function to handle actions after a node/content is created.
+ */
+function ncbs_entity_insert(Drupal\Core\Entity\EntityInterface $entity)
+{
+
+
+// Get the current user and messenger servi
+if ($entity->bundle() === 'add_comments') {
+    $current_user = \Drupal::currentUser();
+    $messenger = \Drupal::messenger();
+// Assuming $entity, $current_user, and $messenger are already defined.
+
+// Get the RequestStack service.
+$request_stack = \Drupal::service('request_stack');
+
+// Call the AddCommentByRole function with all 4 required arguments.
+AddCommentByRole($entity, $current_user, $messenger, $request_stack);
+}
+
+    // Define the content types to handle
+    $content_types = [
+        'basic_information' => 'basic_information_nodes',
+        'academic_qualification' => 'academic_qualification',
+        'other_relevant_information' => 'other_relevant_information',
+        'list_of_referees_' => 'list_of_referees',
+        'update_publications' => 'update_publications',
+        'research_proposal' => 'research_proposal'
+    ];
+
+    // Check if the entity is a node and its bundle is one of the specified types
+    if ($entity->getEntityTypeId() === 'node' && isset($content_types[$entity->bundle()])) {
+        $user_id = $entity->getOwnerId();
+        $bundle = $entity->bundle();
+
+        // Display a generic message to ensure the function is triggered
+        \Drupal::messenger()->addMessage("Entity of type {$bundle} inserted.");
+
+        // Invalidate cache tags specific to the content type and user
+        \Drupal::service('cache_tags.invalidator')->invalidateTags(['user:' . $user_id . ':' . $content_types[$bundle]]);
+
+        // Optionally, you might want to avoid invalidating all render caches unless absolutely necessary
+        \Drupal::cache('render')->invalidateAll(); // This is generally not recommended unless needed for specific reasons
+    }
+
+    //submit application
+    // Check if the entity being inserted is of type 'basic_information'.
+    if ($entity->getEntityTypeId() === 'node') {
+        $type = $entity->bundle();
+
+        // Get the current user.
+        $user = \Drupal::currentUser();
+
+        // Check if the author of the node is the current user.
+        if ($entity->getOwner()->id() === $user->id()) {
+            // Debugging: Log the current user ID.
+            \Drupal::messenger()->addMessage('Current User ID: ' . $user->id());
+
+            switch ($type) {
+                case 'academic_qualification':
+                    $reference_field = 'field_academic_qualification_ref';
+                    break;
+                case 'basic_information':
+                    $reference_field = 'field_basic_information_referenc';
+                    break;
+                case 'other_relevant_information':
+                    $reference_field = 'field_other_relevant_info_ref';
+                    break;
+                case 'list_of_referees_':
+                    $reference_field = 'field_list_of_referees_ref';
+                    break;
+                case 'research_proposal':
+                    $reference_field = 'field_research_proposal_ref';
+                    break;
+                case 'update_publications':
+                    $reference_field = 'field_update_publications_ref';
+                    break;
+                default:
+                    // If the content type doesn't match any of the specified types, exit the script.
+                    return;
+            }
+
+            // Check if the user has already submitted a 'submit_application' entity.
+            $existing_submission = \Drupal::entityQuery('node')
+                ->condition('type', 'submit_application')
+                ->condition('uid', $user->id())
+                ->range(0, 1)
+                ->accessCheck(TRUE)         // Explicitly set access check to TRUE.
+                ->execute();
+
+            // Debugging: Log the existing submission IDs.
+            \Drupal::messenger()->addMessage('Existing Submission IDs: ' . implode(', ', $existing_submission));
+
+            if (!empty($existing_submission)) {
+                // Get the ID of the existing submission.
+                $submission_id = reset($existing_submission);
+
+                // Debugging: Log the ID of the existing submission.
+                \Drupal::messenger()->addMessage('Existing Submission ID: ' . $submission_id);
+
+                // Update the reference field on the 'submit_application' entity.
+                $submission = \Drupal\node\Entity\Node::load($submission_id);
+                $submission->set($reference_field, $entity->id());
+                // Save the changes to the submission entity.
+                $submission->save();
+
+                // Debugging: Log the entity ID being saved to the reference field.
+                \Drupal::messenger()->addMessage(ucwords(str_replace('_', ' ', $type)) . ' Node ID saved to Submission: ' . $entity->id());
+            }
+        }
+    }
+
+
+}
+

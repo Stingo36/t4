@@ -1,0 +1,273 @@
+
+{# node--submit-application.html.twig #}
+<div class="accordion" id="infoAccordion">
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="headingBasicInfo">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseBasicInfo" aria-expanded="false" aria-controls="collapseBasicInfo">
+        Basic Information
+      </button>
+    </h2>
+    <div id="collapseBasicInfo" class="accordion-collapse collapse" aria-labelledby="headingBasicInfo" data-bs-parent="#infoAccordion">
+      <div class="accordion-body">
+        <table class="table table-responsive fixed-table">
+          <tbody>
+          {% if ui_basic_fields %}
+            {% for field_name, field_data in ui_basic_fields %}
+              <tr>
+                <th>{{ field_data.label }}</th>
+                <td>
+                  {% if field_data.value is iterable %}
+                    {{ field_data.value|render }}
+                  {% else %}
+                    {{ field_data.value is not empty ? field_data.value : '' }}
+                  {% endif %}
+                </td>
+              </tr>
+            {% endfor %}
+            {% else %}
+                <p>No Basic Information found.</p>
+            {% endif %}
+            
+          </tbody>
+        </table>
+      </div>
+    </div>
+</div>
+
+<div class="accordion-item">
+    <h2 class="accordion-header" id="headingAcademicQualification">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseAcademicQualification" aria-expanded="false" aria-controls="collapseAcademicQualification">
+            Academic Qualification
+        </button>
+    </h2>
+    <div id="collapseAcademicQualification" class="accordion-collapse collapse" aria-labelledby="headingAcademicQualification" data-bs-parent="#infoAccordion">
+        <div class="accordion-body">
+            {% if data.academic_qualifications %}
+                <div class="academic-qualification">
+                    {% for qualification in data.academic_qualifications %}
+                        <div class="table-responsive">
+                            <table class="table">
+                                <tbody>
+                                    {% for field in qualification %}
+                                        <tr>
+                                            <th style="width: 50%;">{{ field.label }}</th>
+                                            <td style="width: 50%;">{{ field.value }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p>No academic qualifications found.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="accordion" id="infoAccordion">
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="headingOtherRelevantInfo">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOtherRelevantInfo" aria-expanded="false" aria-controls="collapseOtherRelevantInfo">
+        Other Relevant Information
+      </button>
+    </h2>
+    <div id="collapseOtherRelevantInfo" class="accordion-collapse collapse" aria-labelledby="headingOtherRelevantInfo" data-bs-parent="#infoAccordion">
+      <div class="accordion-body">
+        <table class="table table-responsive fixed-table">
+          <tbody>
+          {% if ui_relevant_fields %}
+            {% for field_name, field_data in ui_relevant_fields %}
+              <tr>
+                <th>{{ field_data.label }}</th>
+                <td>
+                  {% if field_data.value is iterable %}
+                    {{ field_data.value|render }}
+                  {% else %}
+                    {{ field_data.value is not empty ? field_data.value : '' }}
+                  {% endif %}
+                </td>
+              </tr>
+            {% endfor %}
+          {% else %}
+            <p>No Other Relevant Information found.</p>
+          {% endif %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="accordion-item">
+    <h2 class="accordion-header" id="headingRefereeDetails">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRefereeDetails" aria-expanded="true" aria-controls="collapseRefereeDetails">
+            Referee Details
+        </button>
+    </h2>
+    <div id="collapseRefereeDetails" class="accordion-collapse collapse" aria-labelledby="headingRefereeDetails" data-bs-parent="#infoAccordion">
+        <div class="accordion-body">
+            {% if data.referee_details %}
+                <div class="referee-details">
+                    {% for referee in data.referee_details %}
+                        <div class="table-responsive">
+                            <table class="table">
+                                <tbody>
+                                    {% for field in referee %}
+                                        <tr>
+                                            <th style="width: 50%;">{{ field.label }}</th>
+                                            <td style="width: 50%;">{{ field.value }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p>No referee details found.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="accordion-item">
+    <h2 class="accordion-header" id="headingPublications">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePublications" aria-expanded="false" aria-controls="collapsePublications">
+            Publications
+        </button>
+    </h2>
+    <div id="collapsePublications" class="accordion-collapse collapse" aria-labelledby="headingPublications" data-bs-parent="#infoAccordion">
+        <div class="accordion-body">
+            {% if data.publications %}
+                <div class="publications">
+                    {% for publication in data.publications %}
+                        <div class="table-responsive">
+                            <table class="table">
+                                <tbody>
+                                    {% for field in publication %}
+                                        <tr>
+                                            <th style="width: 50%;">{{ field.label }}</th>
+                                            <td style="width: 50%;">{{ field.value }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p>No publications found.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+
+<div class="accordion-item">
+    <h2 class="accordion-header" id="headingResearchProposals">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseResearchProposals" aria-expanded="true" aria-controls="collapseResearchProposals">
+            Research Proposals
+        </button>
+    </h2>
+    <div id="collapseResearchProposals" class="accordion-collapse collapse" aria-labelledby="headingResearchProposals" data-bs-parent="#infoAccordion">
+        <div class="accordion-body">
+            {% if data.research_proposals %}
+                <div class="research-proposals">
+                    {% for proposal in data.research_proposals %}
+                        <div class="table-responsive">
+                            <table class="table">
+                                <tbody>
+                                    {% for field in proposal %}
+                                        <tr>
+                                            <th style="width: 50%;">{{ field.label }}</th>
+                                            <td style="width: 50%;">{{ field.value|render }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p>No research proposals found.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+</br>
+<style>
+  .fixed-table {
+    table-layout: fixed;
+    width: 100%;
+  }
+  .fixed-table th, .fixed-table td {
+    width: 50%;
+  }
+</style>
+{% macro renderCommentTable(title, commentField, commentByField, commentDateField) %}
+  <table class="table table-striped table-bordered fixed-table">
+    <thead>
+      <tr>
+        <th class="table-success" colspan="3" style="text-align: center;">{{ title }}</th>
+      </tr>
+      <tr>
+        <th>Name</th>
+        <th>Date</th>
+        <th>Comment</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% if commentField['#items'] is empty and commentDateField['#items'] is empty %}
+        <tr>
+          <td colspan="3" style="text-align: center;">No data available</td>
+        </tr>
+      {% else %}
+        {% for key, item in commentField['#items'] %}
+          <tr>
+            {% if commentByField['#items'][key] is not empty %}
+              <td>{{ commentByField['#items'][key].value }}</td>
+            {% else %}
+              <td></td>
+            {% endif %}
+            {% if commentDateField['#items'][key] is not empty %}
+              <td>{{ commentDateField['#items'][key].value }}</td>
+            {% else %}
+              <td></td>
+            {% endif %}
+            <td>{{ item.value }}</td>
+          </tr>
+        {% endfor %}
+      {% endif %}
+    </tbody>
+  </table>
+{% endmacro %}
+
+{% if user.hasRole('dean') or user.hasRole('administrator') or user.hasRole('admin') %}
+  {{ _self.renderCommentTable('Dean\'s Comments', content.field_dean_comment, content.field_dean_comment_by, content.field_dean_comment_date) }}
+{% endif %}
+
+{% if user.hasRole('director') or user.hasRole('administrator') or user.hasRole('admin') %}
+  {{ _self.renderCommentTable('Director\'s Comments', content.field_director_comment, content.field_director_comment_by, content.field_director_comment_date) }}
+{% endif %}
+
+{% if user.hasRole('admin') or user.hasRole('administrator') %}
+  {{ _self.renderCommentTable('Overall Comments', content.field_overall_comments, content.field_overall_comments_by, content.field_overall_comments_date) }}
+{% endif %}
+
+{% if user.hasRole('board member') or user.hasRole('administrator') %}
+  {{ _self.renderCommentTable('Overall Comments', content.field_overall_comments, content.field_overall_comments_by, content.field_overall_comments_date) }}
+{% endif %}
+
+
+
+
+
+
+
+
+
+
