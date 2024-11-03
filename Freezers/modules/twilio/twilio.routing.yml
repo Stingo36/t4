@@ -1,0 +1,48 @@
+twilio.admin_form:
+  path: /admin/config/system/twilio
+  defaults:
+    _title: Twilio
+    _form: \Drupal\twilio\Form\TwilioAdminForm
+  requirements:
+    _permission: 'administer twilio'
+twilio.admin_test_form:
+  path: /admin/config/system/twilio/test
+  defaults:
+    _title: 'Send Test SMS message'
+    _form: \Drupal\twilio\Form\TwilioAdminTestForm
+  requirements:
+    _permission: 'administer twilio'
+twilio.user_settings_form:
+  path: /user/{user}/edit/twilio
+  defaults:
+    _title: 'Phone Verification'
+    _form: \Drupal\twilio\Form\UserSettingsForm
+  requirements:
+    _permission: 'access twilio'
+    user: \d+
+twilio.receive_message:
+  path: /twilio/sms
+  defaults:
+    _controller: '\Drupal\twilio\Controller\TwilioController::receiveMessage'
+  requirements:
+    _access: 'TRUE'
+twilio.receive_voice:
+  path: /twilio/voice
+  defaults:
+    _controller: '\Drupal\twilio\Controller\TwilioController::receiveVoice'
+  requirements:
+    _access: 'TRUE'
+twilio.receive_status:
+  path: /twilio/status
+  defaults:
+    _controller: '\Drupal\twilio\Controller\TwilioController::receiveStatus'
+  requirements:
+    _access: 'TRUE'
+
+twilio.twilio_log:
+  path: '/admin/reports/twilio'
+  defaults:
+    _title: 'Twilio SMS Log'
+    _controller: '\Drupal\twilio\Controller\TwilioLogController'
+  requirements:
+    _permission: 'access twilio log'

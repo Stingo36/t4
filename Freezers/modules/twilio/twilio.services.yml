@@ -1,0 +1,23 @@
+services:
+  twilio.command:
+    class: Drupal\twilio\Services\Command
+    arguments: ['@config.factory']
+  twilio.sms:
+    class: Drupal\twilio\Services\Sms
+    arguments: ['@database', '@config.factory', '@twilio.command', '@messenger']
+    tags:
+      - { name: 'twilio' }
+  twilio.numbers:
+    class: Drupal\twilio\Services\Numbers
+    arguments: ['@config.factory','@module_handler','@cache_factory']
+    tags:
+      - { name: 'twilio' }
+  twilio.voice:
+    class: Drupal\twilio\Services\Voice
+    arguments: ['@config.factory','@module_handler','@cache_factory']
+    tags:
+      - { name: 'twilio' }
+ # twilio.route_subscriber:
+ #   class: Drupal\twilio\Routing\RouteSubscriber
+ #   tags:
+ #     - { name: event_subscriber }

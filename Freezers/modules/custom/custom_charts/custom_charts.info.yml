@@ -1,0 +1,5 @@
+name: Custom  Graph
+type: module
+description: 'Custom module to get data from Freezers through API and send Alert mail and sms.'
+core_version_requirement: ^10
+package: Custom

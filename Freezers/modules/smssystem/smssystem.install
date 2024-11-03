@@ -1,0 +1,47 @@
+<?php
+
+use Drupal\Core\Field\BaseFieldDefinition;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
+
+/**
+ * @file
+ * Contains the install hooks/functions for the SMS System module.
+ */
+
+ /**
+  * Add a new field "test" as boolean for the "sms" entity.
+  */
+function _smssystem_add_field_test_mode() {
+  $field_definition = BaseFieldDefinition::create('boolean')
+  ->setLabel(new TranslatableMarkup('Test mode?'))
+  ->setDescription(new TranslatableMarkup('A boolean indicating whether the sent SMS is a test/live one.'))
+  ->setDisplayOptions('view', [
+    'label' => 'inline',
+    'type' => 'boolean',
+  ])
+    ->setRevisionable(TRUE)
+    ->setTranslatable(TRUE)
+    ->setDefaultValue(TRUE)
+    // Explicitly initialue existing entities with TRUE, to ensure a consistent
+    // consistent behavior.
+    ->setInitialValue(TRUE)
+    ->setDisplayConfigurable('form', TRUE)
+    ->setDisplayConfigurable('view', TRUE);
+
+  \Drupal::entityDefinitionUpdateManager()
+    ->installFieldStorageDefinition('test', 'sms', 'sms', $field_definition);
+}
+
+/**
+ * D10: Add a new field "test" that will track live/test sent SMS items.
+ */
+function smssystem_update_10001() {
+  _smssystem_add_field_test_mode();
+}
+
+/**
+ * D9: Add a new field "test" that will track live/test sent SMS items.
+ */
+function smssystem_update_9001() {
+  _smssystem_add_field_test_mode();
+}

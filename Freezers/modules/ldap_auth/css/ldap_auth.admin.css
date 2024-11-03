@@ -1,0 +1,836 @@
+.floatee input[type="label"]{
+  width: 20%;
+}
+
+.pito_enable_alignment{
+  width: 100%;
+}
+
+.container_m1 {
+  margin-top: -1.5%;
+  width: 98%;
+  border-radius: 4px;
+}
+
+.container_m1 table tr th{
+  border: none;
+  background-color: inherit;
+  padding: 0%;
+  text-align: left;
+}
+
+/**
+for styling the progress bar in firefox
+ */
+progress {
+  background: repeating-linear-gradient(
+    135deg,
+    #036ffc,
+    #036ffc 20px,
+    #1163cf 20px,
+    #1163cf 40px
+  );
+  width: 100%;
+  display: block;
+  border-radius: 15px;
+  height: 20px;
+}
+
+/**
+* for determinate progress bar. Includes ensuring that browsers dont overide your changes with their own
+ */
+progress[value] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+/**
+* for styling the fill up part of the progress bar in firefox
+ */
+progress::-moz-progress-value {
+  background: repeating-linear-gradient(
+    135deg,
+    #036ffc,
+    #036ffc 20px,
+    #1163cf 20px,
+    #1163cf 40px
+  );
+  border-radius: 3px;
+}
+
+/* styling container part for chrome and firefox */
+progress::-webkit-progress-bar {
+  box-shadow: 0 2px 3px;
+  border-radius: 3px;
+}
+
+/* styling the fill up part for chrome and safari */
+progress::-webkit-progress-value {
+  background: repeating-linear-gradient(
+    135deg,
+    #036ffc,
+    #036ffc 20px,
+    #1163cf 20px,
+    #1163cf 40px
+  );
+  border-radius: 3px;
+}
+
+.btn-block {
+  display: block !important;
+  width: 90% !important;
+}
+
+.ui_text {
+  background-color: rgb(241, 241, 241);
+  padding: 20px
+}
+
+.mo_ldap_support_layout {
+  width: 96%;
+  padding-left: 20px;
+}
+
+.mo_ldap_table_layout_1 {
+    background-color:#e0e0d8 !important;
+    width: 98% !important;
+    padding:1% !important;
+}
+
+.mo_ldap_table_layout_1_mapping {
+    background-color:#e0e0d8 !important;
+    width: 98% !important;
+    padding:1% !important;
+    overflow: hidden;
+}
+
+
+.mo_ldap_licensing_table_layout {
+  background-color: #fff !important;
+  width: 96% !important;
+  padding: 1% !important;
+  overflow: hidden;
+}
+
+.mo_ldap_table_layout_support_1 {
+  border-radius: 4px !important;
+  float: right !important;
+  width:32% !important;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+  padding: 6px 6px 20px 20px !important;
+  margin-bottom: 10px !important;
+  background-color: white;
+}
+
+.mo_ldap_attr_table{
+    height:auto;
+    max-height: 600px;
+    overflow:auto;
+    display: block !important;
+}
+
+.mo_ldap_table_layout {
+    background-color:#FFFFFF;
+    border:1px solid #CCCCCC;
+    padding: 1.5%;
+    border-radius: 4px !important;
+
+}
+
+.mo_ldap_table_layout_mapping {
+    background-color:#FFFFFF;
+    border:1px solid #CCCCCC;
+    padding: 1.5%;
+    border-radius: 4px !important;
+    float: left;
+    width: 62%;
+}
+
+.mo_ldap_table_layout_nav_bar {
+    background-color:#FFFFFF;
+    border:1px solid #CCCCCC;
+    padding: 1.5%;
+    margin-left: 1%;
+    margin-right: 1%;
+    border-radius: 4px !important;
+
+}
+
+
+.mo_ldap_table_layout_logs {
+    background-color: #FFFFFF;
+    padding: 25px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+    border-radius: 4px;
+}
+
+.mo_ldap_license_layout {
+  background-color: #FFFFFF;
+  margin-bottom: 10px;
+  padding: 25px;
+  float: left;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+  border-radius: 4px;
+}
+
+
+.mo_ldap_table_layout td strong {
+    margin-left: 10px;
+}
+
+#mo_ldap_default_apps_input {
+    background-position: 6px 8px;
+    background-repeat: no-repeat;
+    width: 100%;
+    font-size: 15px;
+    padding: 8px 12px 8px 20px;
+    border: 1px solid #ddd;
+    margin-bottom: 8px;
+}
+
+#mo_ldap_default_apps {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+#mo_ldap_default_apps li a {
+    text-decoration: none;
+    font-size: 12px;
+    line-height: 14px;
+    color: black;
+    display: block;
+    min-height: 80px;
+}
+
+.mo_ldap_default_app_icon {
+    max-height: 50px;
+    max-width: 50px
+}
+
+.mo_ldap_default_app_icon:hover {
+    background-color: #eee;
+}
+
+#mo_ldap_default_apps li {
+    border: 1px solid #ddd;
+    background-color: #f6f6f6;
+    padding: 8px 2px;
+    display: inline-block;
+    width: 120px;
+    height: 80px;
+    text-align: center;
+    vertical-align: middle;
+    margin: 2px;
+}
+
+select {
+    width: 100%;
+    padding: 16px 20px;
+    border: none;
+    border-radius: 4px;
+    background-color: #f1f1f1;
+}
+
+.btn {
+    display: inline-block;
+    padding: 4px 22px;
+    margin-bottom: 0;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.42857143;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    -ms-touch-action: manipulation;
+    touch-action: manipulation;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    background-image: none;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    text-decoration: none
+}
+
+.btn:focus,
+.btn:active:focus,
+.btn.active:focus,
+.btn.focus,
+.btn:active.focus,
+.btn.active.focus {
+    outline: thin dotted;
+    outline: 5px auto -webkit-focus-ring-color;
+    outline-offset: -2px
+}
+
+.btn:hover,
+.btn:focus,
+.btn.focus {
+    text-decoration: none
+}
+
+.btn:active,
+.btn.active {
+    background-image: none;
+    outline: 0;
+    -webkit-box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);
+    box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125)
+}
+
+.btn.disabled,
+.btn[disabled],
+fieldset[disabled] .btn {
+    pointer-events: none;
+    cursor: not-allowed;
+    filter: alpha(opacity=65);
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    opacity: .65
+}
+
+.btn-default {
+    color: #333;
+    background-color: #fff;
+    border-color: #ccc
+}
+
+.btn-default:hover,
+.btn-default:focus,
+.btn-default.focus,
+.btn-default:active,
+.btn-default.active,
+.open>.dropdown-toggle.btn-default {
+    color: #333;
+    background-color: #e6e6e6;
+    border-color: #adadad
+}
+
+.btn-default:active,
+.btn-default.active,
+.open>.dropdown-toggle.btn-default {
+    background-image: none
+}
+
+.btn-default.disabled,
+.btn-default[disabled],
+fieldset[disabled] .btn-default,
+.btn-default.disabled:hover,
+.btn-default[disabled]:hover,
+fieldset[disabled] .btn-default:hover,
+.btn-default.disabled:focus,
+.btn-default[disabled]:focus,
+fieldset[disabled] .btn-default:focus,
+.btn-default.disabled.focus,
+.btn-default[disabled].focus,
+fieldset[disabled] .btn-default.focus,
+.btn-default.disabled:active,
+.btn-default[disabled]:active,
+fieldset[disabled] .btn-default:active,
+.btn-default.disabled.active,
+.btn-default[disabled].active,
+fieldset[disabled] .btn-default.active {
+    background-color: #fff;
+    border-color: #ccc
+}
+
+.btn-default .badge {
+    color: #fff;
+    background-color: #333
+}
+
+.btn-primary {
+    color: #fff;
+    background-color: #337ab7;
+    border-color: #2e6da4
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary.focus,
+.btn-primary:active,
+.btn-primary.active,
+.open>.dropdown-toggle.btn-primary {
+    color: #fff;
+    background-color: #286090;
+    border-color: #204d74
+}
+
+.btn-primary:active,
+.btn-primary.active,
+.open>.dropdown-toggle.btn-primary {
+    background-image: none
+}
+
+.btn-primary.disabled,
+.btn-primary[disabled],
+fieldset[disabled] .btn-primary,
+.btn-primary.disabled:hover,
+.btn-primary[disabled]:hover,
+fieldset[disabled] .btn-primary:hover,
+.btn-primary.disabled:focus,
+.btn-primary[disabled]:focus,
+fieldset[disabled] .btn-primary:focus,
+.btn-primary.disabled.focus,
+.btn-primary[disabled].focus,
+fieldset[disabled] .btn-primary.focus,
+.btn-primary.disabled:active,
+.btn-primary[disabled]:active,
+fieldset[disabled] .btn-primary:active,
+.btn-primary.disabled.active,
+.btn-primary[disabled].active,
+fieldset[disabled] .btn-primary.active {
+    background-color: #337ab7;
+    border-color: #2e6da4
+}
+
+.btn-primary .badge {
+    color: #337ab7;
+    background-color: #fff
+}
+
+.btn-success {
+    color: #fff;
+    background-color: #5cb85c;
+    border-color: #4cae4c
+}
+
+.btn-success:hover,
+.btn-success:focus,
+.btn-success.focus,
+.btn-success:active,
+.btn-success.active,
+.open>.dropdown-toggle.btn-success {
+    color: #fff;
+    background-color: #449d44;
+    border-color: #398439
+}
+
+.btn-success:active,
+.btn-success.active,
+.open>.dropdown-toggle.btn-success {
+    background-image: none
+}
+
+.btn-success.disabled,
+.btn-success[disabled],
+fieldset[disabled] .btn-success,
+.btn-success.disabled:hover,
+.btn-success[disabled]:hover,
+fieldset[disabled] .btn-success:hover,
+.btn-success.disabled:focus,
+.btn-success[disabled]:focus,
+fieldset[disabled] .btn-success:focus,
+.btn-success.disabled.focus,
+.btn-success[disabled].focus,
+fieldset[disabled] .btn-success.focus,
+.btn-success.disabled:active,
+.btn-success[disabled]:active,
+fieldset[disabled] .btn-success:active,
+.btn-success.disabled.active,
+.btn-success[disabled].active,
+fieldset[disabled] .btn-success.active {
+    background-color: #5cb85c;
+    border-color: #4cae4c
+}
+
+.btn-success .badge {
+    color: #5cb85c;
+    background-color: #fff
+}
+
+.btn-info {
+    color: #fff;
+    background-color: #5bc0de;
+    border-color: #46b8da
+}
+
+.btn-info:hover,
+.btn-info:focus,
+.btn-info.focus,
+.btn-info:active,
+.btn-info.active,
+.open>.dropdown-toggle.btn-info {
+    color: #fff;
+    background-color: #31b0d5;
+    border-color: #269abc
+}
+
+.btn-info:active,
+.btn-info.active,
+.open>.dropdown-toggle.btn-info {
+    background-image: none
+}
+
+.btn-info.disabled,
+.btn-info[disabled],
+fieldset[disabled] .btn-info,
+.btn-info.disabled:hover,
+.btn-info[disabled]:hover,
+fieldset[disabled] .btn-info:hover,
+.btn-info.disabled:focus,
+.btn-info[disabled]:focus,
+fieldset[disabled] .btn-info:focus,
+.btn-info.disabled.focus,
+.btn-info[disabled].focus,
+fieldset[disabled] .btn-info.focus,
+.btn-info.disabled:active,
+.btn-info[disabled]:active,
+fieldset[disabled] .btn-info:active,
+.btn-info.disabled.active,
+.btn-info[disabled].active,
+fieldset[disabled] .btn-info.active {
+    background-color: #5bc0de;
+    border-color: #46b8da
+}
+
+.btn-info .badge {
+    color: #5bc0de;
+    background-color: #fff
+}
+
+.btn-warning {
+    color: #fff;
+    background-color: #f0ad4e;
+    border-color: #eea236
+}
+
+.btn-warning:hover,
+.btn-warning:focus,
+.btn-warning.focus,
+.btn-warning:active,
+.btn-warning.active,
+.open>.dropdown-toggle.btn-warning {
+    color: #fff;
+    background-color: #ec971f;
+    border-color: #d58512
+}
+
+.btn-warning:active,
+.btn-warning.active,
+.open>.dropdown-toggle.btn-warning {
+    background-image: none
+}
+
+.btn-warning.disabled,
+.btn-warning[disabled],
+fieldset[disabled] .btn-warning,
+.btn-warning.disabled:hover,
+.btn-warning[disabled]:hover,
+fieldset[disabled] .btn-warning:hover,
+.btn-warning.disabled:focus,
+.btn-warning[disabled]:focus,
+fieldset[disabled] .btn-warning:focus,
+.btn-warning.disabled.focus,
+.btn-warning[disabled].focus,
+fieldset[disabled] .btn-warning.focus,
+.btn-warning.disabled:active,
+.btn-warning[disabled]:active,
+fieldset[disabled] .btn-warning:active,
+.btn-warning.disabled.active,
+.btn-warning[disabled].active,
+fieldset[disabled] .btn-warning.active {
+    background-color: #f0ad4e;
+    border-color: #eea236
+}
+
+.btn-warning .badge {
+    color: #f0ad4e;
+    background-color: #fff
+}
+
+.btn-danger {
+    color: #fff;
+    background-color: #d9534f;
+    border-color: #d43f3a
+}
+
+.btn-danger:hover,
+.btn-danger:focus,
+.btn-danger.focus,
+.btn-danger:active,
+.btn-danger.active,
+.open>.dropdown-toggle.btn-danger {
+    color: #fff;
+    background-color: #c9302c;
+    border-color: #ac2925
+}
+
+.btn-danger:active,
+.btn-danger.active,
+.open>.dropdown-toggle.btn-danger {
+    background-image: none
+}
+
+.btn-danger.disabled,
+.btn-danger[disabled],
+fieldset[disabled] .btn-danger,
+.btn-danger.disabled:hover,
+.btn-danger[disabled]:hover,
+fieldset[disabled] .btn-danger:hover,
+.btn-danger.disabled:focus,
+.btn-danger[disabled]:focus,
+fieldset[disabled] .btn-danger:focus,
+.btn-danger.disabled.focus,
+.btn-danger[disabled].focus,
+fieldset[disabled] .btn-danger.focus,
+.btn-danger.disabled:active,
+.btn-danger[disabled]:active,
+fieldset[disabled] .btn-danger:active,
+.btn-danger.disabled.active,
+.btn-danger[disabled].active,
+fieldset[disabled] .btn-danger.active {
+    background-color: #d9534f;
+    border-color: #d43f3a
+}
+
+.btn-danger .badge {
+    color: #d9534f;
+    background-color: #fff
+}
+
+.mo_ldap_enable_extension_message {
+    display: block;
+    text-align: center;
+    font-size: 14px;
+    border-radius: 10px;
+    border: 1px solid #fb9a9a;
+    color: red;
+    background-color: rgba(255, 0, 0, 0.1);
+    padding: 8px;
+    margin-top: 15px;
+}
+
+.btn-link {
+    font-weight: 400;
+    color: #337ab7;
+    border-radius: 0
+}
+
+.btn-link,
+.btn-link:active,
+.btn-link.active,
+.btn-link[disabled],
+fieldset[disabled] .btn-link {
+    background-color: transparent;
+    -webkit-box-shadow: none;
+    box-shadow: none
+}
+
+.btn-link,
+.btn-link:hover,
+.btn-link:focus,
+.btn-link:active {
+    border-color: transparent
+}
+
+.btn-link:hover,
+.btn-link:focus {
+    color: #23527c;
+    text-decoration: underline;
+    background-color: transparent
+}
+
+.btn-link[disabled]:hover,
+fieldset[disabled] .btn-link:hover,
+.btn-link[disabled]:focus,
+fieldset[disabled] .btn-link:focus {
+    color: #777;
+    text-decoration: none
+}
+
+
+
+
+.btn-block {
+    display: block;
+    width: 100%
+}
+
+.btn-block+.btn-block {
+    margin-top: 5px
+}
+
+input[type=submit].btn-block,
+input[type=reset].btn-block,
+input[type=button].btn-block {
+    width: 100%
+}
+
+.btn-right {
+    position: relative;
+    float: right;
+}
+
+.ldap-column {
+    float: left;
+  margin-top: -1%;
+    padding: 0.1%;
+}
+
+#miniorange_ldap_protocol {
+    border-radius: 3px;
+    height: 30px;
+}
+
+.ldap-align {
+  text-align: center;
+}
+
+.left {
+  width: fit-content;
+}
+
+.middle {
+  width: 30%;
+}
+
+.right {
+  width: 7%;
+}
+
+
+.ldap_Server_row:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+
+
+.btn .caret {
+    margin-left: 0
+}
+
+.btn-lg .caret {
+    border-width: 5px 5px 0;
+    border-bottom-width: 0
+}
+
+.dropup .btn-lg .caret {
+    border-width: 0 5px 5px
+}
+
+.confirm-parent {
+    width: 100%;
+}
+
+@media only screen and (max-width:641px) {
+    .confirm-parent {
+        width: 100% !important;
+    }
+}
+
+.mo_orange {
+    color: orange;
+}
+
+.mo_ldap_highlight_background_note_1 {
+  background-color: #e0e0e0;
+  border-radius: 4px;
+  padding: 0.55em;
+  width: 98%;
+}
+
+.mo_ldap_welcome_message {
+    display: block;
+    margin-top: 10px;
+    text-align: center;
+    font-size: 15px;
+    color: rgba(0, 128, 0, 0.80);
+    background-color: rgba(0, 255, 0, 0.15);
+    padding: 5px;
+}
+.table-header-properties{
+  margin-top: 0%;
+}
+.custom-table-properties{
+  border: none;
+  padding-left: 0%;
+}
+.shift-text-left{
+  text-align: left;
+}
+
+.bind_description{
+    margin: 0.2em 0 0 0;
+    color: #595959;
+    font-size: 0.95em;
+}
+
+/* Css for the tooltip*/
+
+.mo-ldap--help {
+    display: inline-block;
+    box-sizing: content-box;
+    width: 18px;
+    height: 18px;
+    margin: 0 0.3em;
+    text-align: center;
+    vertical-align: baseline;
+    color: #fff;
+    border: 2px solid #bbb;
+    border-radius: 50%;
+    background: #bbb;
+    font-size: 14px;
+    font-weight: bold;
+    line-height: 18px;
+    float: right;
+}
+
+.mo-ldap--help:focus,
+.mo-ldap--help:active,
+.mo-ldap--help:hover {
+    cursor: help;
+    color: #fff;
+    border: 2px solid #0074bd;
+    background: #0074bd;
+}
+
+.mo-ldap--help--title {
+    margin-bottom: 0.5em;
+    margin-top: 0.5em;
+    font-size: 1.1em;
+    font-weight: bold;
+    /*display: flex;*/
+    /*justify-content: space-between;*/
+}
+
+.mo-ldap--help--content {
+    font-weight: normal;
+}
+
+.mo-ldap--help--content a:link,
+.mo-ldap--help--content a:visited,
+.mo-ldap--help--content a:hover,
+.mo-ldap--help--content a:active {
+    color: #9cf;
+}
+
+/** CSS for the support icon**/
+.mo-bottom-corner{
+    position: fixed;
+    width: 5em;
+    height: 5em;
+    bottom: 2em;
+    right: 2em;
+    border-radius: 50px;
+    border: black solid;
+    text-align: center;
+    box-shadow: 5px 5px 5px #999;
+    z-index: 100;
+}
+
+/** CSS for the setup guide link **/
+.guide_link{
+    float:right;
+    margin-right: 5%;
+}
+
+.guide_link_1{
+    float:right;
+    margin-right: 3%;
+}

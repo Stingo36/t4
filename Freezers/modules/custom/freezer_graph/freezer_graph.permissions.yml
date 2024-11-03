@@ -1,0 +1,9 @@
+assign_users_to_freezers:
+  title: 'Assign Users to Freezers'
+  description: 'Allow users to assign users to freezers.'
+  restrict access: TRUE
+
+de_assign_users:
+  title: 'De-assign Users'
+  description: 'Allow users to de-assign users.'
+  restrict access: TRUE

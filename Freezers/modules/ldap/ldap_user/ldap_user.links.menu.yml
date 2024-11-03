@@ -1,0 +1,6 @@
+ldap_user.user_settings:
+  title: 'Users'
+  route_name: ldap_user.admin_form
+  description: 'Configure general LDAP user behavior.'
+  parent: ldap.settings
+  weight: 10

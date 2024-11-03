@@ -1,0 +1,160 @@
+<?php
+/**
+ * Implements hook_form_alter().
+ */
+function ncbs_webcam_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+  if ($form_id == 'node_page_form' || $form_id == 'node_page_edit_form') {
+    \Drupal::messenger()->addMessage('ncbs_webcam_form_alter is being executed.');
+
+    // Attach the custom JavaScript file.
+    $form['#attached']['library'][] = 'ncbs_webcam/webcam';
+
+    // Add a container with a video element for the webcam.
+    $form['webcam_container'] = [
+      '#type' => 'container',
+      '#attributes' => ['id' => 'webcam-container'],
+      'camera' => [
+        '#type' => 'inline_template',
+        '#template' => '<video id="my_camera" width="320" height="240" autoplay></video>',
+      ],
+    ];
+
+    // Add the hidden field to store captured image data.
+    $form['webcam_image_data'] = [
+      '#type' => 'hidden',
+      '#attributes' => ['id' => 'webcam_image_data'],
+    ];
+
+    // Add the capture button.
+    $form['capture_button'] = [
+      '#type' => 'button',
+      '#value' => t('Capture Photo'),
+      '#attributes' => ['id' => 'capture', 'type' => 'button'],
+    ];
+
+    // Add a container for the result.
+    $form['result_container'] = [
+      '#type' => 'container',
+      '#attributes' => ['id' => 'result-container'],
+      'result' => [
+        '#type' => 'inline_template',
+        '#template' => '<div id="result"></div>',
+      ],
+    ];
+
+    // Add the custom pre-validation handler to set the field_verified.
+    $form['#validate'][] = 'ncbs_webcam_pre_validation';
+
+    // Add the custom validation handler to check the field_verified status.
+    $form['#validate'][] = 'ncbs_webcam_form_validate';
+
+    // // Disable the save button if field_verified is FALSE.
+    // $node = $form_state->getFormObject()->getEntity();
+    // $verified = $node->get('field_verified')->value;
+
+    // if ($verified == FALSE) {
+    //   $form['actions']['submit']['#attributes']['disabled'] = 'disabled';
+    //   \Drupal::messenger()->addWarning('Save button is disabled because verification is incomplete.' . $verified);
+    // }
+    // Alter the form submission handler to save the image.
+    $form['actions']['submit']['#submit'][] = 'ncbs_webcam_form_submit';
+  }
+}
+
+/**
+ * Pre-validation handler to set the field_verified status.
+ */
+function ncbs_webcam_pre_validation($form, \Drupal\Core\Form\FormStateInterface $form_state) {
+  $node = $form_state->getFormObject()->getEntity();
+  \Drupal::messenger()->addStatus('Pre-validation: Setting field_verified to TRUE.');
+
+  // Set field_verified correctly in the entity (expected type).
+  $node->set('field_verified', [0 => ['value' => TRUE]]);
+
+  // Optionally set in form state if necessary, ensuring it's an array if expected.
+  $form_state->setValue('field_verified', [0 => ['value' => TRUE]]);
+}
+
+/**
+ * Custom validation handler to check the field_verified status.
+ */
+function ncbs_webcam_form_validate($form, \Drupal\Core\Form\FormStateInterface $form_state) {
+  $node = $form_state->getFormObject()->getEntity();
+  $verified = $node->get('field_verified')->value;
+  \Drupal::messenger()->addStatus('Validation check: field_verified = ' . $verified);
+  
+  if ($verified == FALSE) {
+    $form_state->setErrorByName('field_verified', t('The form cannot be submitted because the verification status is FALSE. Please capture and verify the image.'));
+  } else {
+    \Drupal::messenger()->addStatus('Validation passed: field_verified is TRUE.');
+  }
+}
+
+/**
+ * Custom submit handler to save the webcam image into a file field.
+ */
+function ncbs_webcam_form_submit($form, \Drupal\Core\Form\FormStateInterface $form_state) {
+  // Retrieve the node entity.
+  $node = $form_state->getFormObject()->getEntity();
+
+  // Check the value of field_verified directly from the entity.
+  $verified = $node->get('field_verified')->value;
+  \Drupal::messenger()->addStatus('Submit handler: field_verified in submit handler = ' . $verified);
+
+  if ($verified == TRUE) {
+    \Drupal::messenger()->addStatus('Submit handler: Verification passed, proceeding to save the image.');
+
+    // Retrieve the image data from the hidden field.
+    $imageData = $form_state->getValue('webcam_image_data');
+    \Drupal::messenger()->addStatus('Submit handler: Webcam image data retrieved.');
+
+    if (!empty($imageData)) {
+      // Decode the base64-encoded image data.
+      list($type, $imageData) = explode(';', $imageData);
+      list(, $imageData) = explode(',', $imageData);
+      $imageData = base64_decode($imageData);
+
+      if ($imageData !== false) {
+        // Generate a unique file name.
+        $fileName = 'webcam_' . time() . '.jpg';
+        $fileDirectory = 'public://webcam_images';
+
+        // Use the file system service to prepare the directory.
+        $file_system = \Drupal::service('file_system');
+        if (!$file_system->prepareDirectory($fileDirectory, \Drupal\Core\File\FileSystemInterface::CREATE_DIRECTORY | \Drupal\Core\File\FileSystemInterface::MODIFY_PERMISSIONS)) {
+          \Drupal::messenger()->addError('Submit handler: Failed to prepare directory for saving images.');
+          return;
+        }
+
+        // Save the image to the public files directory.
+        $fileUri = $file_system->saveData($imageData, $fileDirectory . '/' . $fileName, \Drupal\Core\File\FileSystemInterface::EXISTS_REPLACE);
+
+        if ($fileUri) {
+          // Create a file entity in Drupal.
+          $file = \Drupal\file\Entity\File::create([
+            'uri' => $fileUri,
+            'status' => 1,  // 1 means the file is permanent.
+          ]);
+          $file->save();
+
+          // Attach the file to the content type field.
+          $node->set('field_webcam_image', [
+            'target_id' => $file->id(),
+            'alt' => 'Webcam Image',
+          ]);
+          $node->save();
+
+          \Drupal::messenger()->addStatus('Submit handler: Webcam image saved successfully to the content.');
+        } else {
+          \Drupal::messenger()->addError('Submit handler: Failed to save the image.');
+        }
+      } else {
+        \Drupal::messenger()->addError('Submit handler: Image data could not be decoded.');
+      }
+    } else {
+      \Drupal::messenger()->addError('Submit handler: No image data found.');
+    }
+  } else {
+    \Drupal::messenger()->addError('Submit handler: Verification failed. Image was not saved.');
+  }
+}

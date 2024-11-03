@@ -1,0 +1,5 @@
+smssystem.system:
+  title: 'SMS System - Configuration'
+  description: 'Configuration management.'
+  parent: system.admin_config_system
+  route_name: smssystem.system

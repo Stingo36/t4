@@ -1,0 +1,25 @@
+# Schema for the Sms System module.
+smssystem.api.config:
+  type: config_object
+  label: SMS System - API
+  mapping:
+    ip:
+      type: textfield
+      label: 'IP'
+    base_path:
+      type: textfield
+      label: 'Base path'
+    username:
+      type: textfield
+      label: 'Auth username'
+    password:
+      type: password
+      label: 'Auth password'
+
+smssystem.config:
+  type: config_object
+  label: SMS System - Configurations
+  mapping:
+    mode:
+      type: radios
+      label: 'Mode'

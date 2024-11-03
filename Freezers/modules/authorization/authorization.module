@@ -1,0 +1,39 @@
+<?php
+
+/**
+ * @file
+ * Contains authorization.module.
+ */
+
+declare(strict_types=1);
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function authorization_help($route_name, RouteMatchInterface $route_match) {
+  if ($route_name === 'help.page.authorization') {
+    $output = '';
+    $output .= '<h3>' . t('About') . '</h3>';
+    $output .= '<p>' . t('Authorization API connects up providers (for example LDAP) with consumers (for example Organic Groups or Drupal roles).') . '</p>';
+    return $output;
+  }
+}
+
+/**
+ * Implements hook_user_login().
+ */
+function authorization_user_login($account) {
+  /** @var \Drupal\authorization\AuthorizationServiceInterface $service */
+  $service = \Drupal::service('authorization.manager');
+  $service->setUser($account);
+  $service->setAllProfiles();
+  $processed_authorizations = $service->getProcessedAuthorizations();
+
+  if (\Drupal::config('authorization.settings')->get('authorization_message')) {
+    foreach ($processed_authorizations as $authorization) {
+      \Drupal::messenger()->addStatus(t('Done with @authorization', ['@authorization' => $authorization->getMessage()]), TRUE);
+    }
+  }
+}

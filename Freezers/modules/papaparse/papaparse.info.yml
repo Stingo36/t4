@@ -1,0 +1,10 @@
+name: Papaparse
+type: module
+description: "Provides Drupal library for the Papaparse javascript library."
+core_version_requirement: ">=8.9 <11.0.0-stable"
+package: csv
+
+# Information added by Drupal.org packaging script on 2023-04-25
+version: '1.0.0'
+project: 'papaparse'
+datestamp: 1682450338

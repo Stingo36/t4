@@ -1,0 +1,222 @@
+<?php
+
+/**
+ * @file
+ * Theme functions.
+ */
+
+// * Include all files from the includes directory.
+$includes_path = dirname(__FILE__) . '/includes/*.inc';
+foreach (glob($includes_path) as $filename) {
+  require_once dirname(__FILE__) . '/includes/' . basename($filename);
+}
+
+
+
+function belgrade_preprocess_node(array &$variables) {
+	$variables['node_author_pic'] = theme_get_setting('node_author_pic', 'xara');
+	$variables['node_tags'] = theme_get_setting('node_tags', 'xara');
+
+
+ // CUSTOM CODE
+// Check if the node bundle is 'dashboard'.
+if ($variables['node']->bundle() === 'dashboard') {
+    // Fetch the node counts.
+    $node_counts = fetchData();
+
+    // Pass the counts to the Twig template.
+    $variables['freezer_names_total_count'] = $node_counts['total'];
+    $variables['freezer_names_published_count'] = $node_counts['published'];
+    $variables['freezer_names_unpublished_count'] = $node_counts['unpublished'];
+}
+
+}
+
+
+// CUSTOM CODE
+use Drupal\node\Entity\Node;
+
+/**
+ * Helper function to count the number of 'freezer_names' nodes.
+ */
+function fetchData() {
+    // Get all 'freezer_names' content type node IDs.
+    $node_ids = \Drupal::entityTypeManager()
+      ->getStorage('node')
+      ->getQuery()
+      ->condition('type', 'freezer_names')
+      ->accessCheck(FALSE)
+      ->execute();
+
+    // Fetch the nodes in a single load operation.
+    $nodes = Node::loadMultiple($node_ids);
+
+    // Initialize counters for total, published, and unpublished nodes.
+    $total_count = count($nodes);
+    $published_count = 0;
+    $unpublished_count = 0;
+
+    // Loop through nodes and count based on their status.
+    foreach ($nodes as $node) {
+        if ($node->isPublished()) {
+            $published_count++;
+        } else {
+            $unpublished_count++;
+        }
+    }
+
+    // Log the node counts to check if they are working.
+    \Drupal::logger('xara')->notice('Total Freezer Names Count: @total, Published Freezer Names Count: @published, Unpublished Freezer Names Count: @unpublished', [
+      '@total' => $total_count,
+      '@published' => $published_count,
+      '@unpublished' => $unpublished_count,
+    ]);
+
+    // Return all three counts in an array.
+    return [
+      'total' => $total_count,
+      'published' => $published_count,
+      'unpublished' => $unpublished_count,
+    ];
+}
+
+
+// /**
+//  * Implements hook_preprocess_views_view_table().
+//  */
+// function belgrade_preprocess_views_view_table(&$variables) {
+//   \Drupal::logger('belgrade')->debug('Preprocess function is called.');
+
+//   $view = $variables['view'];
+//   // Replace 'all_freezers' and 'page_1' with your actual View ID and Display ID.
+//   if ($view->id() == 'all_freezers' && $view->current_display == 'page_1') {
+//     \Drupal::logger('belgrade')->debug('View ID and display ID match.');
+
+//     foreach ($variables['rows'] as $key => &$row) {
+//       // Initialize variables for current, min, and max values.
+//       $current_value = NULL;
+//       $max_value = NULL;
+//       $min_value = NULL;
+
+//       // Initialize variables to check if specific fields exist.
+//       $has_maximum_threshold = array_key_exists('field_maximum_threshold', $row['columns']);
+//       $has_set_temperature = array_key_exists('field_set_temperature', $row['columns']);
+
+//       // Log whether the fields exist.
+//       \Drupal::logger('belgrade')->debug('Field "field_maximum_threshold" exists: @exists', ['@exists' => $has_maximum_threshold ? 'Yes' : 'No']);
+//       \Drupal::logger('belgrade')->debug('Field "field_set_temperature" exists: @exists', ['@exists' => $has_set_temperature ? 'Yes' : 'No']);
+
+//       // If the fields exist, process them.
+//       foreach ($row['columns'] as $field_name => $column) {
+//         // Render the content to get string values using the renderer service.
+//         $rendered_content = \Drupal::service('renderer')->render($column['content']);
+//         $rendered_value = floatval(strip_tags($rendered_content));
+
+//         if ($field_name == 'field_current_value') {
+//           $current_value = $rendered_value;
+//           \Drupal::logger('belgrade')->debug('Current value: @value', ['@value' => $current_value]);
+//         }
+//         elseif ($field_name == 'field_maximum_threshold') {
+//           $max_value = $rendered_value;
+//           \Drupal::logger('belgrade')->debug('Maximum threshold: @value', ['@value' => $max_value]);
+//         }
+//         elseif ($field_name == 'field_set_temperature') {
+//           $min_value = $rendered_value;
+//           \Drupal::logger('belgrade')->debug('Set temperature (minimum threshold): @value', ['@value' => $min_value]);
+//         }
+
+//         // Check if we have all the necessary values.
+//         if (!is_null($current_value) && !is_null($max_value) && !is_null($min_value)) {
+//           // Case 1: Both max and min are positive (++ case)
+//           if ($max_value > 0 && $min_value > 0) {
+//             \Drupal::logger('belgrade')->debug('Both max and min are positive.');
+//             if ($current_value >= $min_value && $current_value <= $max_value) {
+//               \Drupal::logger('belgrade')->debug('Current value within positive range.');
+//             } else {
+//               $row['attributes']->addClass('temperature-alert');
+//               \Drupal::logger('belgrade')->debug('Current value out of positive range.');
+//             }
+//           }
+//           // Case 2: Both max and min are negative (-- case)
+//           elseif ($max_value < 0 && $min_value < 0) {
+//             \Drupal::logger('belgrade')->debug('Both max and min are negative.');
+//             if ($current_value <= $min_value && $current_value >= $max_value) {
+//               \Drupal::logger('belgrade')->debug('Current value within negative range.');
+//             } else {
+//               $row['attributes']->addClass('temperature-alert');
+//               \Drupal::logger('belgrade')->debug('Current value out of negative range.');
+//             }
+//           }
+//           // Case 3: Max is positive, Min is negative (+- case)
+//           elseif ($max_value > 0 && $min_value < 0) {
+//             \Drupal::logger('belgrade')->debug('Max is positive, Min is negative.');
+//             if ($current_value >= $min_value && $current_value <= $max_value) {
+//               \Drupal::logger('belgrade')->debug('Current value within mixed positive/negative range.');
+//             } else {
+//               $row['attributes']->addClass('temperature-alert');
+//               \Drupal::logger('belgrade')->debug('Current value out of mixed positive/negative range.');
+//             }
+//           }
+//           // Case 4: Max is negative, Min is positive (-+ case) - This is logically inconsistent but included for completeness
+//           elseif ($max_value < 0 && $min_value > 0) {
+//             if ($current_value <= $min_value && $current_value >= $max_value) {
+//               \Drupal::logger('belgrade')->debug('Current value within mixed positive/negative range.');
+//             } else {
+//               $row['attributes']->addClass('temperature-alert');
+//               \Drupal::logger('belgrade')->debug('Current value out of mixed positive/negative range.');
+//             }
+//           }
+//         } else {
+//           \Drupal::logger('belgrade')->debug('One or more values are missing.');
+//         }
+//       }
+//     }
+//   } else {
+//     \Drupal::logger('belgrade')->debug('View ID or display ID do not match.');
+//   }
+// }
+
+
+
+
+
+
+use \Drupal\Core\Render\Markup;
+
+/**
+ * Implements hook_preprocess_views_view().
+ */
+function belgrade_preprocess_views_view(&$variables) {
+  // Check if this is the view you want to modify.
+  if ($variables['view']->id() == 'all_freezers' && $variables['view']->current_display == 'page_1') {
+    
+    // Initialize an array to store titles with temperature alerts.
+    $alert_titles = [];
+    
+    // Loop through the view results (rows).
+    foreach ($variables['view']->result as $row) {
+      // Get the rendered value for 'field_current_value'.
+      $rendered_field = $variables['view']->style_plugin->getField($row->index, 'field_current_value');
+      
+      // Check if the 'temperature-alert' class is present.
+      if (strpos($rendered_field, 'temperature-alert') !== FALSE) {
+        
+        // Get the raw value of the title field (instead of the rendered link).
+        $title_field = $row->_entity->get('title')->value; // Adjust field name if it's different.
+        
+        // Add the title to the array of alert titles.
+        $alert_titles[] = $title_field;
+      }
+    }
+    
+    // If there are any titles with alerts, update the view header.
+    if (!empty($alert_titles)) {
+      // Join the titles into a string, separating them by commas.
+      $alert_titles_list = implode(', ', $alert_titles);
+      
+      // Set the view header to display all the titles with temperature alerts.
+      // Use Markup::create() to render HTML safely.
+      $variables['header'] = Markup::create('<h3 style="text-align:center; font-weight:bold; color:red;">' . t('Alert: Temperature Threshold Exceeded for:  @titles', ['@titles' => $alert_titles_list]) . '</h3>');
+    }
+  }
+}

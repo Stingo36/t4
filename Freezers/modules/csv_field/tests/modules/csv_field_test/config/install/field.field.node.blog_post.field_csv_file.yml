@@ -1,0 +1,26 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_csv_file
+    - node.type.blog_post
+  module:
+    - csv_field
+id: node.blog_post.field_csv_file
+field_name: field_csv_file
+entity_type: node
+bundle: blog_post
+label: 'CSV File'
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  file_directory: '[date:custom:Y]-[date:custom:m]'
+  file_extensions: csv
+  max_filesize: '2 MB'
+  description_field: true
+  handler: 'default:file'
+  handler_settings: {  }
+field_type: csv_file

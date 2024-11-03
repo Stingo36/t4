@@ -1,0 +1,8 @@
+administer twilio:
+  title: 'Permit access to administrator setting page'
+  restrict access: TRUE
+access twilio:
+  title: 'Phone verification'
+  description: 'Access the Phone verification page.'
+access twilio log:
+  title: 'Access twilio log'

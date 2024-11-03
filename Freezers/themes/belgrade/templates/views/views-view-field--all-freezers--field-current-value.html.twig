@@ -1,0 +1,80 @@
+{#
+  This template handles the display of the 'field_current_value', 'field_maximum_threshold', 
+  and 'field_minimum_threshold' in the 'all_freezers' view.
+#}
+
+{# Set the variables from the row object #}
+{% set current_value = row._entity.field_current_value.value %}
+{% set max_value = row._entity.field_maximum_threshold.value %}
+{% set min_value = row._entity.field_set_temperature.value %}
+
+{# Check if all values are not null #}
+{% if current_value is not null and max_value is not null and min_value is not null %}
+
+  {# Case 1: Both max and min are positive (++ case) #}
+  {% if max_value > 0 and min_value > 0 %}
+    {# <div>
+      {{ 'Both max and min are positive.'|t }}
+    </div> #}
+    {% if current_value >= min_value and current_value <= max_value %}
+      <div>
+        {{ current_value }}
+      </div>
+    {% else %}
+      <div class="temperature-alert">
+        {{ current_value }}
+      </div>
+    {% endif %}
+
+  {# Case 2: Both max and min are negative (-- case) #}
+  {% elseif max_value < 0 and min_value < 0 %}
+    {# <div>
+      {{ 'Both max and min are negative.'|t }}
+    </div> #}
+    {% if current_value <= min_value and current_value >= max_value %}
+      <div>
+        {{ current_value }}
+      </div>
+    {% else %}
+      <div class="temperature-alert">
+        {{ current_value }}
+      </div>
+    {% endif %}
+
+  {# Case 3: Max is positive, Min is negative (+- case) #}
+  {% elseif max_value > 0 and min_value < 0 %}
+    {# <div>
+      {{ 'Max is positive, Min is negative.'|t }}
+    </div> #}
+    {% if current_value >= min_value and current_value <= max_value %}
+      <div>
+        {{ current_value }}
+      </div>
+    {% else %}
+      <div class="temperature-alert">
+        {{ current_value }}
+      </div>
+    {% endif %}
+
+  {# Case 4: Max is negative, Min is positive (-+ case) - Logically inconsistent, but added for completeness #}
+  {% elseif max_value < 0 and min_value > 0 %}
+    {# <div>
+      {{ 'Max is negative, Min is positive (logically inconsistent).'|t }}
+    </div> #}
+    {% if current_value <= min_value and current_value >= max_value %}
+      <div>
+        {{ current_value }}
+      </div>
+    {% else %}
+      <div class="temperature-alert">
+        {{ current_value }}
+      </div>
+    {% endif %}
+  
+  {% endif %}
+
+{% else %}
+  <div>
+    {{ 'One or more values are missing.'|t }}
+  </div>
+{% endif %}

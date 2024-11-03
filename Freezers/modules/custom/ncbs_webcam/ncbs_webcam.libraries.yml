@@ -1,0 +1,10 @@
+webcam:
+  version: 1.x
+  js:
+    # External adapter.js library for broader WebRTC support
+    https://cdnjs.cloudflare.com/ajax/libs/adapterjs/0.15.4/adapter.min.js: { type: external }
+    # External webcam.js library
+    https://cdnjs.cloudflare.com/ajax/libs/webcamjs/1.0.25/webcam.min.js: { type: external }
+    js/webcam.js: {}
+  dependencies:
+    - core/jquery

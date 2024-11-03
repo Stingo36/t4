@@ -1,0 +1,102 @@
+
+ldap_auth.customer_setup:
+  path: /admin/config/people/ldap_auth/customer_setup
+  defaults:
+    _title: 'Active Directory / LDAP Login &nbsp;&nbsp;&nbsp;  <a class="button button--primary js-form-submit form-submit use-ajax mo_top_bar_button"  data-dialog-options="{&quot;width&quot;:&quot;40%&quot;}" data-dialog-type="modal"  href="requestTrial">Get FREE trial</a><a class="button js-form-submit form-submit mo_top_bar_button" href="licensing">Upgrade Plans</a>'
+    _form: \Drupal\ldap_auth\Form\MiniorangeLdapCustomerSetup
+  requirements:
+    _permission: 'administer site configuration'
+
+ldap_auth.ldap_config:
+  path: /admin/config/people/ldap_auth/ldap_config
+  defaults:
+    _title: 'Active Directory / LDAP Login &nbsp;&nbsp;&nbsp;  <a class="button button--primary js-form-submit form-submit use-ajax mo_top_bar_button"  data-dialog-options="{&quot;width&quot;:&quot;40%&quot;}" data-dialog-type="modal"  href="requestTrial">Get FREE trial</a><a class="button js-form-submit form-submit mo_top_bar_button" href="licensing">Upgrade Plans</a>'
+    _form: \Drupal\ldap_auth\Form\MiniorangeLDAP
+  requirements:
+    _permission: 'administer site configuration'
+
+ldap_auth.signin_settings:
+  path: /admin/config/people/ldap_auth/signin_settings
+  defaults:
+    _title: 'Active Directory / LDAP Login &nbsp;&nbsp;&nbsp;  <a class="button button--primary js-form-submit form-submit use-ajax mo_top_bar_button"  data-dialog-options="{&quot;width&quot;:&quot;40%&quot;}" data-dialog-type="modal"  href="requestTrial">Get FREE trial</a><a class="button js-form-submit form-submit mo_top_bar_button" href="licensing">Upgrade Plans</a>'
+    _form: \Drupal\ldap_auth\Form\MiniorangeGeneralSettings
+  requirements:
+    _permission: 'administer site configuration'
+
+ldap_auth.settings:
+  path: /admin/config/people/ldap_auth/settings
+  defaults:
+    _title: 'Active Directory / LDAP Login &nbsp;&nbsp;&nbsp;  <a class="button button--primary js-form-submit form-submit use-ajax mo_top_bar_button"  data-dialog-options="{&quot;width&quot;:&quot;40%&quot;}" data-dialog-type="modal"  href="requestTrial">Get FREE trial</a><a class="button js-form-submit form-submit mo_top_bar_button" href="licensing">Upgrade Plans</a>'
+    _form: \Drupal\ldap_auth\Form\MiniorangeAdvanceSetting
+  requirements:
+    _permission: 'administer site configuration'
+
+ldap_auth.troubleshoot:
+  path: /admin/config/people/ldap_auth/troubleshoot
+  defaults:
+    _title: 'Active Directory / LDAP Login &nbsp;&nbsp;&nbsp;  <a class="button button--primary js-form-submit form-submit use-ajax mo_top_bar_button"  data-dialog-options="{&quot;width&quot;:&quot;40%&quot;}" data-dialog-type="modal"  href="requestTrial">Get FREE trial</a><a class="button js-form-submit form-submit mo_top_bar_button" href="licensing">Upgrade Plans</a>'
+    _form: \Drupal\ldap_auth\Form\MiniorangeDebug
+  requirements:
+    _permission: 'administer site configuration'
+
+ldap_auth.attribute_mapping:
+  path: /admin/config/people/ldap_auth/attribute_mapping
+  defaults:
+    _title: 'Active Directory / LDAP Login &nbsp;&nbsp;&nbsp;  <a class="button button--primary js-form-submit form-submit use-ajax mo_top_bar_button"  data-dialog-options="{&quot;width&quot;:&quot;40%&quot;}" data-dialog-type="modal"  href="requestTrial">Get FREE trial</a><a class="button js-form-submit form-submit mo_top_bar_button" href="licensing">Upgrade Plans</a>'
+    _form: \Drupal\ldap_auth\Form\AttributeMapping
+  requirements:
+    _permission: 'administer site configuration'
+
+ldap_auth.user_sync:
+  path: /admin/config/people/ldap_auth/user_sync
+  defaults:
+    _title: 'Active Directory / LDAP Login &nbsp;&nbsp;&nbsp;  <a class="button button--primary js-form-submit form-submit use-ajax mo_top_bar_button"  data-dialog-options="{&quot;width&quot;:&quot;40%&quot;}" data-dialog-type="modal"  href="requestTrial">Get FREE trial</a><a class="button js-form-submit form-submit mo_top_bar_button" href="licensing">Upgrade Plans</a>'
+    _form: \Drupal\ldap_auth\Form\MiniorangeUserSync
+  requirements:
+    _permission: 'administer site configuration'
+
+ldap_auth.licensing:
+  path: /admin/config/people/ldap_auth/Licensing
+  defaults:
+    _title: 'Active Directory / LDAP Login &nbsp;&nbsp;&nbsp;  <a class="button button--primary js-form-submit form-submit use-ajax mo_top_bar_button"  data-dialog-options="{&quot;width&quot;:&quot;40%&quot;}" data-dialog-type="modal"  href="requestTrial">Get FREE trial</a><a class="button js-form-submit form-submit mo_top_bar_button" href="licensing">Upgrade Plans</a>'
+    _form: \Drupal\ldap_auth\Form\MiniorangeLicensing
+  requirements:
+    _permission: 'administer site configuration'
+
+
+ldap_auth.uninstall_module:
+  path: /uninstall_module
+  defaults:
+    _controller: '\Drupal\ldap_auth\Controller\miniorange_ldapController::uninst_mod'
+  requirements:
+    _permission: 'administer site configuration'
+
+#Route for Trial Request
+ldap_auth.request_trial:
+  path: /admin/config/people/ldap_auth/requestTrial
+  defaults:
+    _title: 'Request Trial'
+    _form: \Drupal\ldap_auth\Form\MiniornageLDAPRequestTrial
+  requirements:
+    _permission: 'administer site configuration'
+
+#Route for Support Request/Contact Us
+ldap_auth.request_support:
+  path: /admin/config/people/ldap_auth/requestSupport/{content_type}
+  defaults:
+    _title: 'Contact miniOrange Support'
+    _form: \Drupal\ldap_auth\Form\MiniornageLDAPRequestSupport
+    content_type : 'contact_us'
+  requirements:
+    _permission: 'administer site configuration'
+
+#Route for Test configuration
+ldap_auth.test_configuration:
+  path: /testLdapConfig
+  defaults:
+    _controller: '\Drupal\ldap_auth\Controller\miniorange_ldapController::test_configuration'
+  requirements:
+    _access: 'TRUE'
+
+
+

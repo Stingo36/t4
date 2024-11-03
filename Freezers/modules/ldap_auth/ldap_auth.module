@@ -1,0 +1,193 @@
+<?php
+/**
+ * @file
+ * Module file for miniOrange ldap Module.
+ */
+
+use Drupal\ldap_auth\AuditAndLogs;
+use Drupal\ldap_auth\LDAPFlow;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Drupal\user\Entity\User;
+use Drupal\Component\Utility\Html;
+use Drupal\ldap_auth\LDAPLOGGERS;
+use Drupal\Core\Routing\RouteMatchInterface;
+use Symfony\Component\HttpFoundation\Response;
+use Drupal\ldap_auth\Utilities;
+use Drupal\Core\Url;
+
+/**
+ * Implements hook_help().
+ */
+function ldap_auth_help($route_name, RouteMatchInterface $route_match)
+{
+  switch ($route_name) {
+    case 'help.page.ldap_auth':
+      $url = Url::fromRoute('user.admin_index')->toString();
+      $moduleLink = $url . '/ldap_auth/ldap_config';
+
+      $moduleLandingPage = 'https://plugins.miniorange.com/drupal-ldap';
+      $setup_guides = 'https://plugins.miniorange.com/guide-to-configure-ldap-ad-integration-module-for-drupal';
+
+      $output = '';
+      $output .= '<h3>' . t('About: </h3>');
+      $output .= '<p>' . t('Drupal LDAP / Active Directory Integration module allows your users to log in to your Drupal site using their LDAP / AD credentials. In addition to authenticating using LDAP, the module also allows you to log in using NTLM and Kerberos(Windows login). <br><a target="_blank" href="' . $moduleLandingPage . '">[Know more]</a>') . '</p>';
+      $output .= '<h5>' . t('Configuration:') . '</h5>';
+      $output .= '<p>' . t('Configure your LDAP configurations from:  under the Configuration » <a target = "_blank" href=" ' . $url . ' ">People</a> » <a target = "_blank" href=" ' . $moduleLink . ' ">miniOrange Active Directory / LDAP Integration</a>') . '</p>';
+      $output .= '<p></p>';
+      $output .= '<h5>' . t('How to Configure:') . '</h5>';
+      $output .= t('You can refer to our step by step <a target="_blank" href="'.$setup_guides.'"><strong>SETUP GUIDES</strong></a> as well as our <a target="_blank" href="'.$setup_guides.'"><strong>SETUP VIDEO</strong></a> to configure the module with your LDAP/Active Directory server. If you want, you can also reach out to us at <a href="mailto:drupalsupport@xecurify.com">drupalsupport@xecurify.com</a> and we will schedule a meeting and help you with the setup.');
+      $output .= '<p>' . t('') . '</p><br>';
+      $output .= '<p></p>';
+      return $output;
+  }
+}
+
+/**
+* Implements hook_form_alter().
+*/
+
+function ldap_auth_form_alter(&$form,&$form_state,$form_id){
+
+  $config = \Drupal::config('ldap_auth.settings');
+	$login_with_ldap = $config->get('miniorange_ldap_enable_ldap');
+
+	if(!\Drupal::currentUser()->isAuthenticated()){
+		if ($form_id == 'user_login_block' || $form_id == 'user_login' || $form_id == 'user_login_form') {
+
+        $descriptions = [
+            'name' => $config->get('username_description'),
+            'pass' => $config->get('password_description')
+        ];
+
+        foreach ($descriptions as $key => $description) {
+            if ($description) {
+                $form[$key]['#description'] = t($description);
+            }
+        }
+
+
+			if($login_with_ldap){
+				array_unshift($form['#validate'],'ldap_auth_form_alter_submit');
+			}
+		}
+	}
+
+}
+
+function ldap_auth_form_alter_submit(&$form, &$form_state){
+
+  $base_url = \Drupal::request()->getSchemeAndHttpHost().\Drupal::request()->getBasePath();
+	$username = Html::escape($_POST['name']);
+	$password = $_POST['pass'];
+
+  // Captcha module validation for invalid captcha.
+  if($form_state->hasAnyErrors()){
+        $form_errors = $form_state->getErrors();
+        foreach ($form_errors as $form_element => $form_error){
+            $form_state->setErrorbyName($form_element,$form_error);
+        }
+        return;
+    }
+
+	\Drupal::logger('ldap_auth')->notice('L1: Got control' );
+  $ldap_connect = new LDAPFlow();
+  $auth_response = $ldap_connect->ldap_login($username, $password);
+
+	LDAPLOGGERS::addLogger('L2: Auth Response Status: ',$auth_response->statusMessage,__LINE__,__FUNCTION__,__FILE__);
+	LDAPLOGGERS::addLogger('L3: Complete Auth Response: ',$auth_response,__LINE__,__FUNCTION__,__FILE__);
+
+	\Drupal::configFactory()->getEditable('ldap_auth.settings')->set('miniorange_ldap_drupal_login',$auth_response->statusMessage )->save();
+
+  if ($auth_response->statusMessage == 'SUCCESS') {
+    $account = user_load_by_name($username);
+    LDAPLOGGERS::addLogger('L4: Loading account using username: ', $username,__LINE__,__FUNCTION__,__FILE__);
+    \Drupal::configFactory()->getEditable('ldap_auth.settings')->set('miniorange_ldap_drupal_login', 'Successfull Response from the Server')->save();
+
+    /**
+     * loading account using email address if account is not loaded by username
+     */
+    if (empty($account)) {
+      LDAPLOGGERS::addLogger('L5: Trying to load account in Drupal using email: ','',__LINE__,__FUNCTION__,__FILE__);
+      $email = $auth_response->profileAttributesList['mail'];
+      if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $account = user_load_by_mail($email);
+      }
+      elseif (filter_var($auth_response->profileAttributesList['userprincipalname'] ?? '', FILTER_VALIDATE_EMAIL)) {
+        $account = user_load_by_mail($auth_response->profileAttributesList['userprincipalname']);
+      }
+      else {
+        $email_attribute = \Drupal::config('ldap_auth.settings')->get('miniorange_ldap_email_attribute');
+        $audits = new AuditAndLogs($username,time(),AuditAndLogs::EMAIL_NOT_RECEIVED);
+        $audits->addAudits();
+        $form_state->setErrorByName('name', t('Email Address not received. Please check your email attribute mapping and try again.'));
+        \Drupal::configFactory()->getEditable('ldap_auth.settings')->set('miniorange_ldap_drupal_login', "Successful response from the Server [ Email Address not received, Email attribute: $email_attribute]")->save();
+        return;
+      }
+    }
+
+    if ($account == null) {
+      $audits = new AuditAndLogs($username,time(),AuditAndLogs::USER_NOT_EXIST_IN_DRUPAL,$email);
+      $audits->addAudits();
+
+      \Drupal::configFactory()->getEditable('ldap_auth.settings')->set('miniorange_ldap_drupal_login', 'Successfull Response from the Server (user not exist in Drupal)')->save();
+
+      LDAPLOGGERS::addLogger('L6: Account Not Found','',__LINE__,__FUNCTION__,__FILE__);
+      Utilities::add_message(t('Error: User found in LDAP server but not in Drupal.<br><br>
+Possible Cause: In the free version of the module, only your existing Drupal users can login using their LDAP/Active Directory credentials.<br>
+<br>Please check the Logs & Report tab of the Active Directory/LDAP Login module for more details.'), 'form_error', $form_state);
+      return;
+    }
+
+    if($account->isBlocked()){
+      $audits = new AuditAndLogs($username,time(),AuditAndLogs::BLOCKED_USER);
+      $audits->addAudits();
+
+      $form_state->setErrorByName('name', t('<strong>BLOCKED USER :</strong> User not allowed to log in.'));
+      return;
+    }
+
+    $account->save();
+    $edit = array();
+    $edit['redirect'] = $base_url;
+    user_login_finalize($account);
+    LDAPLOGGERS::addLogger('L7: User Logged in Drupal','',__LINE__,__FUNCTION__,__FILE__);
+
+    $response = new RedirectResponse($edit['redirect']);
+    $request = \Drupal::request();
+    $request->getSession()->save();
+    $response->prepare($request);
+    \Drupal::service('kernel')->terminate($request, $response);
+    $response->send();
+    exit();
+    return new Response();
+  }
+	else if ($auth_response->statusMessage == "PHP_LDAP_EXTENSION_NOT_ENABLED") {
+		Utilities::add_message(t('PHP LDAP extension is not installed or enabled. Please enable it.'),'form_error',$form_state);
+        return;
+	}
+	else if ($auth_response->statusMessage == "LDAP_NOT_RESPONDING") {
+        $audits = new AuditAndLogs($username,time(),AuditAndLogs::LDAP_NOT_RESPONDING);
+        $audits->addAudits();
+		Utilities::add_message(t('It looks like your LDAP is not responding. Please contact your administrator or try after some time.'),'form_error',$form_state);
+		return;
+	}
+	else if ($auth_response->statusMessage == "LDAP_ERROR"){
+		Utilities::add_message(t('PHP LDAP extension is not installed or disabled. Please enable it.'),'form_error',$form_state);
+        return;
+	}
+	else if ($auth_response->statusMessage == "CURL_ERROR"){
+		Utilities::add_message(t('PHP cURL extension is not installed or disabled. Please enable it.'),'form_error',$form_state);
+        return;
+	}
+	else if ($auth_response->statusMessage == 'OPENSSL_ERROR') {
+		Utilities::add_message(t('PHP OpenSSL extension is not installed or disabled. Please enable it.'),'form_error',$form_state);
+        return;
+	}
+  else if($auth_response->statusMessage == 'USER_NOT_EXIST_IN_LDAP'){
+    if(!Drupal::service('user.auth')->authenticate($username, $password)){
+      Utilities::add_message(t("Oops! The username is not recognized on both the LDAP Server and Drupal server.<br>Please check the Logs & Report tab of the Active Directory/LDAP Login module for more details. "),'form_error',$form_state);
+      return;
+    }
+  }
+
+}

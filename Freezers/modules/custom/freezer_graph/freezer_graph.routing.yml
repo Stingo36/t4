@@ -1,0 +1,13 @@
+freezer_graph.response:
+  path: '/api/value'
+  defaults:
+    _controller: '\Drupal\freezer_graph\Controller\FreezerDataController::receiveData'
+    _title: 'Get values'
+  #methods: [GET]
+  methods: [POST]
+  requirements:
+    _permission: 'access content'
+
+
+
+

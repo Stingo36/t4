@@ -1,0 +1,13 @@
+{
+  "name": "drupal/csv_field",
+  "description": "Provides a CSV text field that displays data as a table.",
+  "type": "drupal-module",
+  "homepage": "https://www.drupal.org/project/csv_field",
+  "support": {
+    "issues": "https://www.drupal.org/project/issues/csv_field"
+  },
+  "license": "GPL-2.0+",
+  "require": {
+    "drupal/papaparse": "^1.0"
+  }
+}

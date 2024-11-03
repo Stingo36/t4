@@ -1,0 +1,14 @@
+twilio.admin_form:
+  route_name: twilio.admin_form
+  title: 'Twilio Settings'
+  weight: -10
+  base_route: twilio.admin_form
+twilio.admin_test_form:
+  route_name: twilio.admin_test_form
+  title: 'Send Test SMS message'
+  weight: 0
+  base_route: twilio.admin_form
+twilio.account_status:
+  title: 'Phone Verification'
+  route_name: 'twilio.user_settings_form'
+  base_route: 'entity.user.canonical'

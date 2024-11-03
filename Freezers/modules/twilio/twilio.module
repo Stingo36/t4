@@ -1,0 +1,152 @@
+<?php
+
+/**
+ * @file
+ * Contains twilio.module.
+ */
+
+use Drupal\user\Entity\User;
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\twilio\Controller\TwilioController;
+
+/**
+ * Implements hook_help().
+ */
+function twilio_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the twilio module.
+    case 'help.page.twilio':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Integration the Twilio cloud communication service with Drupal.') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function twilio_form_user_register_form_alter(&$form, FormStateInterface $form_state) {
+  // Redirect users to their profile pages.
+  $twilio_registration_form = \Drupal::config('twilio.settings')->get('registration_form');
+
+  if ($twilio_registration_form == 2) {
+    $required = TRUE;
+  }
+  else {
+    $required = FALSE;
+  }
+
+  $form['account']['countrycode'] = [
+    "#type" => 'select',
+    '#options' => TwilioController::countryDialCodes(FALSE),
+    '#title' => t('Country code'),
+  ];
+  $form['account']['number'] = [
+    '#type' => 'textfield',
+    '#title' => t('Phone number'),
+    '#required' => $required,
+  ];
+  $form['#validate'][] = 'twilio_register_validate';
+
+
+  // Is the site configured to send SMS on registration?
+  $send_sms = \Drupal::config('twilio.settings')->get('registration_send');
+  if (!empty($send_sms)) {
+    $form['actions']['submit']['#submit'][] = 'twilio_register_submit';
+  }
+
+}
+
+/**
+ * Custom validation function for phone numbers during registration.
+ */
+function twilio_register_validate($form, FormStateInterface $form_state) {
+  $value = $form_state->getValues();
+
+  // Something has been entered but is non numeric.
+  if (!is_numeric($value['number'])) {
+    $form_state->setErrorByName('number', t('You must enter a valid phone number'));
+  }
+
+  $num_verify = \Drupal::service('twilio.sms')->twilioVerifyDuplicateNumber($value['number']);
+
+  if ($num_verify) {
+    $form_state->setErrorByName('number', t('This number is already in use and cannot be assigned to more than one account'));
+  }
+}
+
+/**
+ * Custom submit handler for phone numbers during registration.
+ */
+function twilio_register_submit($form, FormStateInterface $form_state) {
+  $values = $form_state->getValues();
+
+  // No phone number entered, don't try to send SMS.
+  if (empty($values['number'])) {
+    return;
+  }
+
+  $account = User::load($values['uid']);
+  \Drupal::service('twilio.sms')->twilioUserSendConfirmation($account, $values['number'], $values['countrycode']);
+}
+
+/**
+ * Implements hook_user_login().
+ */
+function twilio_user_login($account) {
+
+  $twilio_registration_form = \Drupal::config('twilio.settings')->get('registration_form');
+  // If the users mobile number is in the verification state let them know they
+  // need to enter their verification code and link to their settings page.
+  if ($twilio_registration_form == '2' || $twilio_registration_form == '1') {
+    $twilio_user = \Drupal::service('twilio.sms')->twilioLoad($account->id());
+    if ($twilio_user['status'] != 2) {
+      $link = '/user/' . $account->id() . '/edit/twilio';
+      $message = t('You must confirm your phone number by entering the verification code sent to you via SMS. Go to the <a href=":account_link">account settings page</a> to enter your verification code.',
+          [':account_link' => $link]);
+      \Drupal::messenger()->addStatus($message);
+
+    }
+  }
+
+}
+
+/**
+ * Implements hook_user_load().
+ */
+function twilio_user_load($account) {
+  // Load data from the {twilio_user} table for the user account.
+  $connection = \Drupal::service('database');
+  $result = $connection->select('twilio_user', 'u')
+    ->fields('u', [
+      'uid',
+      'country',
+      'number',
+      'status',
+      'code',
+      'timestamp',
+    ])
+    ->condition('uid', array_keys($account), 'IN')
+    ->execute();
+
+  foreach ($result as $record) {
+    if (!empty($record->uid)) {
+      // Assign the twilio data to the user object.
+      $account[$record->uid]->twilio_user = (array) $record;
+    }
+  }
+}
+
+/**
+ * Implements hook_user_delete().
+ */
+function twilio_user_delete($account) {
+  \Drupal::database()
+    ->delete('twilio_user')
+    ->condition('uid', $account->id())
+    ->execute();
+}

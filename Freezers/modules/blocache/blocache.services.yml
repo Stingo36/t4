@@ -1,0 +1,9 @@
+services:
+  blocache:
+    class: Drupal\blocache\Blocache
+    arguments: ['@service_container']
+  blocache.metadata:
+    class: Drupal\blocache\BlocacheMetadata
+  blocache.token:
+    class: Drupal\blocache\BlocacheToken
+    arguments: ['@token', '@current_user', '@current_route_match', '@entity_type.manager']

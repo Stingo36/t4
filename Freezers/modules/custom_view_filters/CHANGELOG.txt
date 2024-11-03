@@ -1,0 +1,55 @@
+Custom View Filters 2.1.0, 2024-08-20
+-------------------------------------
+#3429740: Drupal 11 compatibility
+#3390583: Fix issues reported by phpcs and enable gitlab pipeline
+
+Custom View Filters 2.0.1, 2022-08-26
+-------------------------------------
+Specify group of module's filters
+Drupal 10 compatibility
+
+Custom View Filters 2.0.0, 2021-03-19
+-------------------------------------
+Adopted semantic versioning. No major changes since 8.x-1.4
+Issue #3200713: Element::children() must be of the type array, string given
+
+Custom View Filters 8.x-1.4, 2020-08-04
+---------------------------------------
+Issue #3155078: Granular Date Filter:
+Replace "All" by "Years" and "All" by "Month"
+Granular Date Filter: Allow users to customize desired year range
+
+Custom View Filters 8.x-1.3, 2020-04-14
+---------------------------------------
+Issue #3127631: Add a date range filter
+
+Custom View Filters 8.x-1.2, 2020-04-14
+---------------------------------------
+Full compatibility with Drupal 9
+Requires Drupal 8.7.7 or newer
+
+Custom View Filters 8.x-1.1, 2019-12-23
+---------------------------------------
+Issue #3098040: If use a pager an illegal choice has been detected
+Issue #3097074: Year "All" not working when there's a selected month
+Issue #3097224: AZ Does not work for node title
+
+Custom View Filters 8.x-1.0, 2019-10-06
+---------------------------------------
+Issue #3083895: Use the properties "created" and "changed"
+apart from the custom fields
+
+Custom View Filters 8.x-1.0-rc2, 2019-09-19
+-------------------------------------------
+Issue #3082333: Error when exposing Node granular date filter
+
+Custom View Filters 8.x-1.0-rc1, 2019-09-11
+-------------------------------------------
+
+#3039424: Provide an 'All' option in A-Z filter
+Fixed bug on date filter: If you filter only by month now it filters correctly
+
+Custom View Filters 8.x-1.0-beta1, 2018-12-5
+--------------------------------------------
+
+First version for Drupal 8.

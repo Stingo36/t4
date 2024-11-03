@@ -1,0 +1,20 @@
+custom_charts:
+  version: 1.x
+  js:
+    https://cdn.amcharts.com/lib/5/index.js: { type: external, minified: true }
+    https://cdn.amcharts.com/lib/5/xy.js: { type: external, minified: true }
+    https://cdn.amcharts.com/lib/5/themes/Animated.js: { type: external, minified: true }
+    js/custom_charts.js: {}
+    js/dependent_dropdowns.js: {}
+    
+
+  css:
+    theme:
+      css/custom_charts.css: {}
+  dependencies:
+    - core/jquery
+    - core/drupal
+    - core/drupalSettings
+    - core/drupal.ajax
+    - core/jquery.once
+

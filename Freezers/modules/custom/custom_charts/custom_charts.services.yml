@@ -1,0 +1,6 @@
+services:
+  custom_charts.freezer_table_block:
+    class: Drupal\custom_charts\Plugin\Block\FreezerTableBlock
+    arguments: ['@pager.manager']
+    tags:
+      - { name: block }

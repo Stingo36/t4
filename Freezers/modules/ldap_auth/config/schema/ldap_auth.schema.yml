@@ -1,0 +1,38 @@
+ldap_auth.settings:
+  type: config_object
+  label: Settings
+  mapping:
+    miniorange_ldap_customer_admin_email:
+      type: string
+    miniorange_ldap_license_key:
+      type: string
+    miniorange_ldap_customer_id:
+      type: string
+    miniorange_ldap_customer_admin_token:
+      type: string
+    miniorange_ldap_customer_api_key:
+      type: string
+    miniorange_ldap_name:
+      type: string
+    miniorange_ldap_enable_login:
+      type: boolean
+    miniorange_ldap_username_attribute:
+      type: string
+    miniorange_ldap_email_attribute:
+      type: string
+    miniorange_ldap_default_role:
+      type: string
+    miniorange_ldap_status:
+      type: string
+    miniorange_ldap_customer_admin_phone:
+      type: string
+    miniorange_ldap_tx_id:
+      type: string
+    miniorange_ldap_customer_admin_password:
+      type: string
+    miniorange_ldap_base_url :
+      type: string
+    miniorange_ldap_enable_logs :
+      type: boolean
+    miniorange_ldap_is_configured :
+      type: boolean

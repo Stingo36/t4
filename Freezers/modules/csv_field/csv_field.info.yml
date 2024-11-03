@@ -1,0 +1,13 @@
+name: "CSV Field"
+type: module
+description: "Provides a field that renders csv data as a table."
+core_version_requirement: ^9.3 || ^10
+package: Field types
+dependencies:
+  - drupal:file
+  - papaparse:papaparse
+
+# Information added by Drupal.org packaging script on 2024-06-27
+version: '1.0.10'
+project: 'csv_field'
+datestamp: 1719468597

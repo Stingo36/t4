@@ -1,0 +1,135 @@
+<?php
+
+/**
+ * @file
+ * Module install hooks.
+ */
+
+/**
+ * Implements hook_schema().
+ */
+function twilio_schema() {
+  $schema = [];
+  $schema['twilio_user'] = [
+    'fields' => [
+      'uid' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+      'number' => [
+        'type' => 'varchar',
+        'not null' => TRUE,
+        'length' => 32,
+      ],
+      'country' => [
+        'type' => 'varchar',
+        'not null' => TRUE,
+        'length' => 32,
+        'default' => '1',
+      ],
+      'status' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+      'code' => [
+        'type' => 'varchar',
+        'not null' => FALSE,
+        'length' => 16,
+        'default' => '',
+      ],
+      'timestamp' => [
+        'type' => 'int',
+        'description' => 'Date/time when the code has been sent, as Unix timestamp.',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+    ],
+    'primary key' => ['number'],
+    'indexes' => ['uid' => ['uid']],
+  ];
+
+  $schema['twilio_log'] = [
+    'fields' => [
+      'id' => [
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+      'from' => [
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => TRUE,
+      ],
+      'to' => [
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => TRUE,
+      ],
+      'body' => [
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+      ],
+      'mediaUrl' => [
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => FALSE,
+        'default' => NULL,
+      ],
+      'timestamp' => [
+        'type' => 'int',
+        'description' => 'Date/time when the sms has been sent, as Unix timestamp.',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+    ],
+    'primary key' => ['id'],
+  ];
+
+  return $schema;
+}
+
+/**
+ * Add timestamp column.
+ */
+function twilio_update_9001() {
+  $database = \Drupal::service('database');
+  if (!$database->schema()->fieldExists('twilio_user', 'timestamp')) {
+    $database->schema()->addField('twilio_user', 'timestamp',
+      [
+        'type' => 'int',
+        'description' => 'Date/time when the code has been sent, as Unix timestamp.',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ]
+    );
+  }
+}
+
+/**
+ * Add log table.
+ */
+function twilio_update_10101() {
+  $spec = twilio_schema();
+  $schema = \Drupal::service('database')->schema();
+  $schema->createTable('twilio_log', $spec['twilio_log']);
+}
+
+/**
+ * Add time column in log table.
+ */
+function twilio_update_10102() {
+  $database = \Drupal::service('database');
+  if (!$database->schema()->fieldExists('twilio_log', 'timestamp')) {
+    $database->schema()->addField('twilio_log', 'timestamp',
+      [
+        'type' => 'int',
+        'description' => 'Date/time when the sms has been sent, as Unix timestamp.',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ]
+    );
+  }
+}

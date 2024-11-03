@@ -1,0 +1,264 @@
+ [notice] Message: Cron job started.
+
+ [notice] Message: State service initialized.
+
+ [notice] Message: Logger service initialized.
+
+ [notice] Message: Node storage service initialized.
+
+ [notice] Message: Fetched FreezerNames content type node IDs.
+
+ [notice] Message: Loaded FreezerName: Test1
+
+ [notice] Message: Loaded FreezerName: Test2
+
+ [notice] Message: Loaded FreezerName: Freezer1
+
+ [notice] Message: Loaded FreezerName: Freezer2
+
+ [notice] Message: Loaded FreezerName: Freezers1
+
+ [notice] Message: Loaded FreezerName: Freezers2
+
+ [notice] Message: Fetched template node ID for "Endpoint Missed Alert".
+
+ [notice] Message: Loaded and rendered template message.
+
+ [notice] Message: Current time fetched: 2024-09-18 22:29:02
+
+ [notice] Message: Last hit time for Test1: 0
+
+ [notice] Message: Time difference calculated for Test1: 1726678742 seconds.
+
+ [notice] Message: Last value for Test1: N/A
+
+ [notice] Message: Freezer Test1 has not been hit in the last 2 minutes.
+
+ [notice] Message: Last hit time for Test2: 0
+
+ [notice] Message: Time difference calculated for Test2: 1726678742 seconds.
+
+ [notice] Message: Last value for Test2: N/A
+
+ [notice] Message: Freezer Test2 has not been hit in the last 2 minutes.
+
+ [notice] Message: Last hit time for Freezer1: 1726602453
+
+ [notice] Message: Time difference calculated for Freezer1: 76289 seconds.
+
+ [notice] Message: Last value for Freezer1: 43
+
+ [notice] Message: Freezer Freezer1 has not been hit in the last 2 minutes.
+
+ [notice] Message: Last hit time for Freezer2: 1726602453
+
+ [notice] Message: Time difference calculated for Freezer2: 76289 seconds.
+
+ [notice] Message: Last value for Freezer2: 67
+
+ [notice] Message: Freezer Freezer2 has not been hit in the last 2 minutes.
+
+ [notice] Message: Last hit time for Freezers1: 1726656280
+
+ [notice] Message: Time difference calculated for Freezers1: 22462 seconds.
+
+ [notice] Message: Last value for Freezers1: -77
+
+ [notice] Message: Freezer Freezers1 has not been hit in the last 2 minutes.
+
+ [notice] Message: Last hit time for Freezers2: 1726656280
+
+ [notice] Message: Time difference calculated for Freezers2: 22462 seconds.
+
+ [notice] Message: Last value for Freezers2: -77
+
+ [notice] Message: Freezer Freezers2 has not been hit in the last 2 minutes.
+
+ [notice] Message: Not hit freezers found. Preparing to send alerts.
+
+ [notice] Message: Email addresses fetched for alerts.
+
+ [notice] Message: Processing alert for freezer: Test1
+
+ [notice] Message: Template message is available for sending alert.
+
+ [notice] Message: Sending email alert for freezer: Test1
+
+ [notice] Message: Email alert sent successfully for freezer: Test1
+
+ [notice] Message: Log node created successfully for freezer: Test1
+
+ [notice] Message: Processing alert for freezer: Test2
+
+ [notice] Message: Sending email alert for freezer: Test2
+
+ [notice] Message: Email alert sent successfully for freezer: Test2
+
+ [notice] Message: Log node created successfully for freezer: Test2
+
+ [notice] Message: Processing alert for freezer: Freezer1
+
+ [notice] Message: Sending email alert for freezer: Freezer1
+
+ [notice] Message: Email alert sent successfully for freezer: Freezer1
+
+ [notice] Message: Log node created successfully for freezer: Freezer1
+
+ [notice] Message: Processing alert for freezer: Freezer2
+
+ [notice] Message: Sending email alert for freezer: Freezer2
+
+ [notice] Message: Email alert sent successfully for freezer: Freezer2
+
+ [notice] Message: Log node created successfully for freezer: Freezer2
+
+ [notice] Message: Processing alert for freezer: Freezers1
+
+ [notice] Message: Sending email alert for freezer: Freezers1
+
+ [notice] Message: Email alert sent successfully for freezer: Freezers1
+
+ [notice] Message: Log node created successfully for freezer: Freezers1
+
+ [notice] Message: Processing alert for freezer: Freezers2
+
+ [notice] Message: Sending email alert for freezer: Freezers2
+
+ [notice] Message: Email alert sent successfully for freezer: Freezers2
+
+ [notice] Message: Log node created successfully for freezer: Freezers2
+
+ [notice] Message: Cron job finished.
+
+ [notice] Message: Cron job started.
+
+ [notice] Message: State service initialized.
+
+ [notice] Message: Logger service initialized.
+
+ [notice] Message: Node storage service initialized.
+
+ [notice] Message: Fetched FreezerNames content type node IDs.
+
+ [notice] Message: Loaded FreezerName: Test1
+
+ [notice] Message: Loaded FreezerName: Test2
+
+ [notice] Message: Loaded FreezerName: Freezer1
+
+ [notice] Message: Loaded FreezerName: Freezer2
+
+ [notice] Message: Loaded FreezerName: Freezers1
+
+ [notice] Message: Loaded FreezerName: Freezers2
+
+ [notice] Message: Fetched template node ID for "Endpoint Missed Alert".
+
+ [notice] Message: Loaded and rendered template message.
+
+ [notice] Message: Current time fetched: 2024-09-18 22:30:01
+
+ [notice] Message: Last hit time for Test1: 0
+
+ [notice] Message: Time difference calculated for Test1: 1726678801 seconds.
+
+ [notice] Message: Last value for Test1: N/A
+
+ [notice] Message: Freezer Test1 has not been hit in the last 2 minutes.
+
+ [notice] Message: Last hit time for Test2: 0
+
+ [notice] Message: Time difference calculated for Test2: 1726678801 seconds.
+
+ [notice] Message: Last value for Test2: N/A
+
+ [notice] Message: Freezer Test2 has not been hit in the last 2 minutes.
+
+ [notice] Message: Last hit time for Freezer1: 1726602453
+
+ [notice] Message: Time difference calculated for Freezer1: 76348 seconds.
+
+ [notice] Message: Last value for Freezer1: 43
+
+ [notice] Message: Freezer Freezer1 has not been hit in the last 2 minutes.
+
+ [notice] Message: Last hit time for Freezer2: 1726602453
+
+ [notice] Message: Time difference calculated for Freezer2: 76348 seconds.
+
+ [notice] Message: Last value for Freezer2: 67
+
+ [notice] Message: Freezer Freezer2 has not been hit in the last 2 minutes.
+
+ [notice] Message: Last hit time for Freezers1: 1726656280
+
+ [notice] Message: Time difference calculated for Freezers1: 22521 seconds.
+
+ [notice] Message: Last value for Freezers1: -77
+
+ [notice] Message: Freezer Freezers1 has not been hit in the last 2 minutes.
+
+ [notice] Message: Last hit time for Freezers2: 1726656280
+
+ [notice] Message: Time difference calculated for Freezers2: 22521 seconds.
+
+ [notice] Message: Last value for Freezers2: -77
+
+ [notice] Message: Freezer Freezers2 has not been hit in the last 2 minutes.
+
+ [notice] Message: Not hit freezers found. Preparing to send alerts.
+
+ [notice] Message: Email addresses fetched for alerts.
+
+ [notice] Message: Processing alert for freezer: Test1
+
+ [notice] Message: Template message is available for sending alert.
+
+ [notice] Message: Sending email alert for freezer: Test1
+
+ [notice] Message: Email alert sent successfully for freezer: Test1
+
+ [notice] Message: Log node created successfully for freezer: Test1
+
+ [notice] Message: Processing alert for freezer: Test2
+
+ [notice] Message: Sending email alert for freezer: Test2
+
+ [notice] Message: Email alert sent successfully for freezer: Test2
+
+ [notice] Message: Log node created successfully for freezer: Test2
+
+ [notice] Message: Processing alert for freezer: Freezer1
+
+ [notice] Message: Sending email alert for freezer: Freezer1
+
+ [notice] Message: Email alert sent successfully for freezer: Freezer1
+
+ [notice] Message: Log node created successfully for freezer: Freezer1
+
+ [notice] Message: Processing alert for freezer: Freezer2
+
+ [notice] Message: Sending email alert for freezer: Freezer2
+
+ [notice] Message: Email alert sent successfully for freezer: Freezer2
+
+ [notice] Message: Log node created successfully for freezer: Freezer2
+
+ [notice] Message: Processing alert for freezer: Freezers1
+
+ [notice] Message: Sending email alert for freezer: Freezers1
+
+ [notice] Message: Email alert sent successfully for freezer: Freezers1
+
+ [notice] Message: Log node created successfully for freezer: Freezers1
+
+ [notice] Message: Processing alert for freezer: Freezers2
+
+ [notice] Message: Sending email alert for freezer: Freezers2
+
+ [notice] Message: Email alert sent successfully for freezer: Freezers2
+
+ [notice] Message: Log node created successfully for freezer: Freezers2
+
+ [notice] Message: Cron job finished.
+

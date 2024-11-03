@@ -1,0 +1,14 @@
+name: 'CSV Field test'
+type: module
+description: 'Test module for CSV Field module.'
+package: Testing
+dependencies:
+  - drupal:node
+  - drupal:menu_ui
+  - drupal:file
+  - csv_field:csv_field
+
+# Information added by Drupal.org packaging script on 2024-06-27
+version: '1.0.10'
+project: 'csv_field'
+datestamp: 1719468597

@@ -1,0 +1,20 @@
+# Schema for the configuration files of the CSV Field module.
+field.storage_settings.csv_file:
+  type: field.storage_settings.file
+  label: 'CSV File settings'
+
+field.field_settings.csv_file:
+  type: field.field_settings.file
+  label: 'CSV File settings'
+
+field.widget.settings.csv_file_generic:
+  type: field.widget.settings.file_generic
+  label: 'CSV File format settings'
+
+field.formatter.settings.csv_file_table:
+  type: field.formatter.settings.file_default
+  label: 'Table formatter settings'
+  mapping:
+    display_as_datatable:
+      type: boolean
+      label: 'Display as datatable'

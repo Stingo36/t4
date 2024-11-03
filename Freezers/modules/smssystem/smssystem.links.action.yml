@@ -1,0 +1,5 @@
+entity.sms_message_template.add:
+  route_name: entity.sms_message_template.add
+  title: 'Add SMS Message Template'
+  appears_on:
+    - entity.sms_message_template.collection

@@ -1,0 +1,19 @@
+miniorange_ldap_idp_customer_admin_email: null
+miniorange_ldap_license_key: null
+miniorange_ldap_customer_id: ''
+miniorange_ldap_customer_admin_token: ''
+miniorange_ldap_customer_api_key: ''
+miniorange_ldap_name: ''
+miniorange_ldap_enable_login: false
+miniorange_ldap_username_attribute: ''
+miniorange_ldap_email_attribute: 'mail'
+miniorange_ldap_default_role: ''
+miniorange_ldap_status: ''
+miniorange_ldap_customer_admin_phone: null
+miniorange_ldap_tx_id: null
+miniorange_ldap_customer_admin_password: ''
+miniorange_ldap_login_by: 0
+miniorange_ldap_enable_logs: 1
+miniorange_ldap_base_url : ''
+miniorange_ldap_steps : 0
+miniorange_ldap_is_configured : 0

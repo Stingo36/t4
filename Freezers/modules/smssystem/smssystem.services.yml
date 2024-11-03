@@ -1,0 +1,4 @@
+services:
+  smssystem.send_sms:
+    class: Drupal\smssystem\Services\SmsSend
+    arguments: ['@http_client', '@config.factory', '@logger.factory', '@entity_type.manager', '@token', '@current_user', '@queue']

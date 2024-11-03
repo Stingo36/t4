@@ -1,0 +1,11 @@
+name: Blocache
+type: module
+description: 'Allows users to individually configure the cache of each block.'
+core_version_requirement: ^9.1 || ^10
+php: 8.1
+dependencies:
+  - drupal:block
+# Information added by Drupal.org packaging script on 2023-02-22
+version: '2.0.0'
+project: 'blocache'
+datestamp: 1677074118

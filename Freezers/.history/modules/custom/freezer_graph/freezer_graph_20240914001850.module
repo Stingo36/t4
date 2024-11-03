@@ -1,0 +1,226 @@
+<?php
+
+
+
+
+use Drupal\Core\Logger\RfcLogLevel;
+use Drupal\menu_test\Access\AccessCheck;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\views\ViewExecutable;
+use Drupal\views\Plugin\views\query\QueryPluginBase;
+use Drupal\node\Entity\Node;
+
+use Symfony\Component\HttpFoundation\RedirectResponse;
+
+
+/**
+ * Implements hook_mail().
+ */
+function freezer_graph_mail($key, &$message, $params)
+{
+    // Log the parameters to debug
+    \Drupal::logger('freezer_graph')->info('Mail function called with params: @params', ['@params' => print_r($params, TRUE)]);
+
+    switch ($key) {
+        case 'alert_email':
+            $message['from'] = $params['from'];
+            $message['subject'] = $params['title'];
+            $message['body'][] = $params['message']; // Ensure the message body is set correctly
+            $message['headers']['Cc'] = implode(',', $params['ccEmails']);
+            break;
+        case 'endpoint_missed':
+            $message['subject'] = t('Endpoint Missed Alert');
+            $message['body'][] = $params['message'];
+            break;
+    }
+    \Drupal::logger('freezer_graph')->notice('Attempting to send email with From: @from', ['@from' => $message['headers']['From']]);
+}
+
+
+function freezer_graph_form_alter(&$form, FormStateInterface $form_state, $form_id)
+{
+
+
+
+    //! -----------------------
+
+    if ($form_id == 'views_exposed_form' && isset($form['#id'])) {
+        // \Drupal::messenger()->addMessage('Form ID: ' . $form['#id']); // Debugging message
+        if ($form['#id'] == 'views-exposed-form-freezer-data-block-1') { // Replace with your actual form ID.
+            // Check if the user has the 'faculty' role.
+            $user = \Drupal::currentUser();
+            if (in_array('faculty', $user->getRoles())) {
+                // Load the current user's profile entity.
+                $profile = \Drupal::entityTypeManager()->getStorage('user')->load($user->id());
+                if ($profile && $profile->hasField('field_freezer_name_ref')) {
+                    $freezer_names_ref = $profile->get('field_freezer_name_ref')->referencedEntities();
+                    $freezer_names = [];
+                    foreach ($freezer_names_ref as $ref_node) {
+                        $freezer_names[] = $ref_node->getTitle();
+                    }
+
+                    // Load all taxonomy terms for 'Freezer Name List'.
+                    $vocabulary = 'freezer_name_list'; // Replace with your actual vocabulary machine name.
+                    $terms = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadTree($vocabulary);
+                    $matching_options = [];
+
+                    // Filter taxonomy terms based on the referenced node titles.
+                    foreach ($terms as $term) {
+                        if (in_array($term->name, $freezer_names) || $term->tid == 47) { // Include term_id 47 by default
+                            $matching_options[$term->tid] = $term->name;
+                        }
+                    }
+
+                    // Modify the options of the field_freezer_names filter.
+                    if (isset($form['field_freezer_names_target_id'])) {
+                        $form['field_freezer_names_target_id']['#options'] = $matching_options;
+                        \Drupal::messenger()->addMessage('Filters: ' . print_r($matching_options, TRUE)); // Debugging message
+                        // Remove the 'All' option and set the default to the second option if available.
+                        if (count($matching_options) > 1) {
+                            $form['field_freezer_names_target_id']['#default_value'] = array_keys($matching_options)[1];
+                        } elseif (count($matching_options) == 1) {
+                            $form['field_freezer_names_target_id']['#default_value'] = array_keys($matching_options)[0];
+                        }
+                        $form['field_freezer_names_target_id']['#required'] = TRUE;
+                        \Drupal::messenger()->addMessage('Filter options updated for faculty role.'); // Debugging message
+                    } else {
+                        \Drupal::messenger()->addMessage('field_freezer_names filter not found.'); // Debugging message
+                    }
+                } else {
+                    \Drupal::messenger()->addMessage('field_freezer_name_ref field not found in user profile.'); // Debugging message
+                }
+            } else {
+                //    \Drupal::messenger()->addMessage('User does not have faculty role.'); // Debugging message
+            }
+        } else {
+            //  \Drupal::messenger()->addMessage('Form ID does not match views-exposed-form-freezer-data-block-1.'); // Debugging message
+        }
+    } else {
+        //\Drupal::messenger()->addMessage('Form ID is not views_exposed_form or form ID not set.'); // Debugging message
+    }
+
+
+    if ($form_id == 'node_set_default_email_id_edit_form') {
+        $form['revision']['#access'] = FALSE;
+    }
+
+    // if ($form_id == 'user_login_form') {
+    // // Add a custom submit handler.
+    // $form['actions']['submit']['#submit'][] = 'freezer_graph_user_login_form_submit';
+    // }
+}
+
+
+
+
+
+
+
+
+/**
+ * Implements hook_form_FORM_ID_alter() to alter the node-freezer-names-edit-form.
+ */
+function freezer_graph_form_node_freezer_names_edit_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id)
+{
+    // Make the title field read-only.
+    $form['title']['#disabled'] = TRUE;
+    $form['revision_information']['#access'] = FALSE;
+}
+
+
+
+// function freezer_graph_cron() {
+//     // Load the entity type manager service.
+//     $entity_type_manager = \Drupal::entityTypeManager();
+
+//     // Comment out the condition that checks for nodes older than 30 days.
+//     // Load the current time and calculate the timestamp for 30 days ago.
+//     // $current_time = \Drupal::time()->getCurrentTime();
+//     // $thirty_days_ago = strtotime('-30 days', $current_time);
+
+//     // Query to get all nodes of content type 'freezer_data'.
+//     $query = $entity_type_manager->getStorage('node')->getQuery();
+//     $query->condition('type', 'freezer_data')->accessCheck(FALSE);
+//     // $query->condition('created', $thirty_days_ago, '<');
+//     $nids = $query->execute();
+
+//     if (!empty($nids)) {
+//       // Load the nodes.
+//       $nodes = $entity_type_manager->getStorage('node')->loadMultiple($nids);
+
+//       // Delete the nodes.
+//       foreach ($nodes as $node) {
+//         $node->delete();
+//       }
+
+//       \Drupal::logger('freezer_graph')->notice('Deleted @count nodes of content type "freezer_data".', ['@count' => count($nids)]);
+//     }
+//     else {
+//       \Drupal::logger('freezer_graph')->notice('No nodes of content type "freezer_data" found to delete.');
+//     }
+//   }
+
+
+/**
+ * Implements hook_cron().
+ */
+// function freezer_graph_cron() {
+//     // Define the number of nodes to delete per cron run.
+//     $nodes_per_cron = 20000;
+
+//     // Load node IDs of the type you want to delete.
+//     $query = \Drupal::entityQuery('node')
+//       ->condition('type', 'freezer_data') // Replace with your content type machine name
+//       ->range(0, $nodes_per_cron)
+//       ->accessCheck(FALSE)
+//       ->execute();
+
+//     if ($query) {
+//       $nodes = Node::loadMultiple($query);
+//       foreach ($nodes as $node) {
+//         $node->delete();
+//       }
+//     }
+//   }
+
+
+
+/**
+ * Implements hook_cron().
+ */
+function freezer_graph_cron()
+{
+    // Get the state service
+    $state = \Drupal::state();
+
+    // Get the last hit timestamp
+    $last_hit_time = $state->get('freezer_graph.last_hit_time', 0);
+
+    // Current time
+    $current_time = time();
+
+    // Calculate the time difference
+    $time_difference = $current_time - $last_hit_time;
+
+    // Check if the endpoint has not been hit in the last 2 minutes (120 seconds)
+    if ($time_difference > 120) {
+        // Log an error
+        \Drupal::logger('freezer_graph')->error('The /api/value endpoint has not been hit in the last @minutes minutes.', ['@minutes' => round($time_difference / 60, 2)]);
+        \Drupal::messenger()->addMessage('The /api/value endpoint has not been hit in the last @minutes minutes.', ['@minutes' => round($time_difference / 60, 2)]);
+        // Optional: Send an email alert
+        $mailManager = \Drupal::service('plugin.manager.mail');
+        $module = 'freezer_graph';
+        $key = 'endpoint_missed';
+        $to = 'sahilst@ext.ncbs.res.in'; // Replace with your email address
+        $params['message'] = 'The /api/value endpoint has not been hit in the last ' . round($time_difference / 60, 2) . ' minutes.';
+        $langcode = \Drupal::languageManager()->getDefaultLanguage()->getId();
+        $send = true;
+
+        $result = $mailManager->mail($module, $key, $to, $langcode, $params, NULL, $send);
+
+        if ($result['result'] !== true) {
+            \Drupal::logger('freezer_graph')->error('There was a problem sending email to @email.', ['@email' => $to]);
+            \Drupal::messenger()->addMessage('There was a problem sending email to @email.', ['@email' => $to]);
+        }
+    }
+}

@@ -1,0 +1,47 @@
+ldap_auth.ldap_config:
+  route_name: ldap_auth.ldap_config
+  title: 'miniOrange Active Directory / LDAP Integration'
+  description: 'Configure Active Directory/LDAP Login for your Drupal site'
+  parent: user.admin_index
+
+ldap_auth.customer_setup:
+  route_name: ldap_auth.customer_setup
+  title: 'Register/Login'
+  description: 'Active Directory Integration / LDAP Integration - NTLM & Kerberos Login Configuration'
+  parent: ldap_auth.ldap_config
+
+ldap_auth.signin_settings:
+  route_name: ldap_auth.signin_settings
+  title: 'NTLM/Kerberos'
+  description: 'Active Directory Integration / LDAP Integration - NTLM & Kerberos Login Configuration'
+  parent: ldap_auth.ldap_config
+
+ldap_auth.attribute_mapping:
+  route_name: ldap_auth.attribute_mapping
+  title: 'Mappings'
+  description: 'Active Directory Integration / LDAP Integration - NTLM & Kerberos Login Configuration'
+  parent: ldap_auth.ldap_config
+
+ldap_auth.settings:
+  route_name: ldap_auth.settings
+  title: 'Advanced Settings'
+  description: 'Active Directory Integration / LDAP Integration - NTLM & Kerberos Login Configuration'
+  parent: ldap_auth.ldap_config
+
+ldap_auth.user_sync:
+   route_name: ldap_auth.user_sync
+   title: 'LDAP Provisioning'
+   description: 'Active Directory Integration / LDAP Integration - NTLM & Kerberos Login Configuration'
+   parent: ldap_auth.ldap_config
+
+ldap_auth.troubleshoot:
+  route_name: ldap_auth.troubleshoot
+  title: 'Logs & Report'
+  description: 'Logging and Troubleshooting'
+  parent: ldap_auth.ldap_config
+
+ldap_auth.licensing:
+  route_name: ldap_auth.licensing
+  title: 'Upgrade Plans'
+  description: 'Active Directory Integration / LDAP Integration - NTLM & Kerberos Login Configuration'
+  parent: ldap_auth.ldap_config

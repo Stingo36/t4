@@ -1,0 +1,65 @@
+<?php
+
+/**
+ * @file
+ * Adds custom functionality for csv_field module.
+ */
+
+use Drupal\Core\Link;
+use Drupal\Core\Template\Attribute;
+use Drupal\Core\Url;
+use Drupal\Component\Serialization\Json;
+
+/**
+ * Implements hook_theme().
+ */
+function csv_field_theme() {
+  return [
+    'csv_table' => [
+      'variables' => [
+        'file' => NULL,
+        'attributes' => [],
+        'settings' => [],
+      ],
+    ],
+  ];
+}
+
+/**
+ * Prepares variables for csv table templates.
+ *
+ * Default template: csv-table.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - file: A File entity to which the link will be created.
+ *   - attributes: An associative array of attributes to be placed in the
+ *     table tag.
+ */
+function template_preprocess_csv_table(array &$variables) {
+  $file = $variables['file'];
+  $options = [];
+
+  $url = $file->createFileUrl(FALSE);
+  $variables['#cache']['contexts'][] = 'url.site';
+
+  $mime_type = $file->getMimeType();
+  $options['attributes']['type'] = $mime_type;
+
+  $variables['settings'] = Json::decode($variables['attributes']['data-settings']);
+
+  // Use the description as the link text if available.
+  if (empty($variables['settings']['downloadText'])) {
+    $link_text = $file->getFilename();
+  }
+  else {
+    $link_text = $variables['settings']['downloadText'];
+    $options['attributes']['title'] = $file->getFilename();
+  }
+
+  $options['attributes']['download'] = TRUE;
+
+  $variables['attributes'] = new Attribute($variables['attributes']);
+
+  $variables['link'] = Link::fromTextAndUrl($link_text, Url::fromUri($url, $options))->toRenderable();
+}

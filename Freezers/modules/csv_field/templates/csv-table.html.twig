@@ -1,0 +1,20 @@
+{#
+/**
+ * @file
+ * Default theme implementation for rendering CSV as table.
+ *
+ * Available variables:
+ * - attributes: The HTML attributes for the containing element.
+ * - link: A link to the file.
+ * - settings: The attribute data-settings.
+ *
+ * @see template_preprocess_csv_table()
+ *
+ * @ingroup themeable
+ */
+#}
+<div{{ attributes }}>{{ link }}</div>
+{{ attach_library('csv_field/csv_field') }}
+{% if settings.autolink %}
+  {{ attach_library('csv_field/autolinker') }}
+{% endif %}
