@@ -1,0 +1,42 @@
+# custom_charts.freezer_data:
+#   path: '/custom-charts/freezer-data/{a}'
+#   defaults:
+#     _controller: '\Drupal\custom_charts\Controller\FreezerDataController::getFreezerData'
+#     _title: 'Freezer Data'
+#   requirements:
+#     _permission: 'access content'
+
+
+# custom_charts.get_freezer_data:
+#   path: '/custom-charts/freezer-data1/{freezer_name}'
+#   defaults:
+#     _controller: '\Drupal\custom_charts\Controller\FreezerTableController::getFreezerData'
+#     _title: 'Get Freezer Data'
+#   requirements:
+#    _permission: 'access content'
+
+
+custom_charts.freezer_data:
+  path: '/custom-charts/freezer-data/{freezer_name}'
+  defaults:
+    _controller: '\Drupal\custom_charts\Controller\FreezerDataController::getFreezerData'
+    _title: 'Freezer Data'
+  requirements:
+    _permission: 'access content'
+
+
+custom_charts.freezer_names:
+  path: '/freezer_names'
+  defaults:
+    _controller: '\Drupal\custom_charts\Controller\FreezerNamesController::getFreezerNames'
+    _title: 'Freezer Names'
+  requirements:
+    _permission: 'access content'
+
+custom_charts.floor_names:
+  path: '/floor_names'
+  defaults:
+    _controller: '\Drupal\custom_charts\Controller\FreezerNamesController::getFloorNames'
+    _title: 'Floor Names'
+  requirements:
+    _permission: 'access content'

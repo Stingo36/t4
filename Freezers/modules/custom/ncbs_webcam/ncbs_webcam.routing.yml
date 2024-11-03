@@ -1,0 +1,7 @@
+ncbs_webcam.save_image:
+  path: '/webcam/save-image'
+  defaults:
+    _controller: '\Drupal\ncbs_webcam\Controller\WebcamController::saveImage'
+    _title: 'Save Image'
+  requirements:
+    _permission: 'access content'

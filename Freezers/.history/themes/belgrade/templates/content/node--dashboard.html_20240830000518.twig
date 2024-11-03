@@ -1,0 +1,36 @@
+<div class="container-fluid">
+    <div class="row">
+        <!-- Card for All -->
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card text-white shadow-sm card-hover card-all">
+                <div class="card-body">
+                    <h2 class="fw-bold card-title text-uppercase font-weight-bold">All</h2>
+                    <h2 class="fw-bold card-text font-weight-bold">{{ freezer_names_total_count }}</h2>
+                </div>
+                <div class="card-footer text-start"> <!-- Changed from text-end to text-start -->
+                    <a href="/Freezers/freezer-history" class="btn btn-outline-light btn-sm view-link">View</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card for Published -->
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card text-white shadow-sm card-hover card-published">
+                <div class="card-body">
+                    <h2 class="fw-bold card-title text-uppercase font-weight-bold">ACTIVE</h2>
+                    <h2 class="fw-bold card-text font-weight-bold">{{ freezer_names_published_count }}</h2>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card for Unpublished -->
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card text-white shadow-sm card-hover card-unpublished">
+                <div class="card-body">
+                    <h2 class="fw-bold card-title text-uppercase font-weight-bold">OFFLINE</h2>
+                    <h2 class="fw-bold card-text font-weight-bold">{{ freezer_names_unpublished_count }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

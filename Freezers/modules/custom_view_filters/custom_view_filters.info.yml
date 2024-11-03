@@ -1,0 +1,13 @@
+name: 'Custom View Filters'
+description: 'Custom filters collection'
+package: 'Views'
+type: module
+core_version_requirement: ^8.7.7 || ^9 || ^10 || ^11
+
+dependencies:
+  - drupal:views
+
+# Information added by Drupal.org packaging script on 2024-08-20
+version: '2.1.0'
+project: 'custom_view_filters'
+datestamp: 1724181930

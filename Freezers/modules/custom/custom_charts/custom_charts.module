@@ -1,0 +1,37 @@
+<?php 
+
+
+/**
+ * Implements hook_block_view_alter().
+ */
+function custom_graphs_block_view_alter(array &$build, \Drupal\Core\Block\BlockPluginInterface $block) {
+    // Check if the block is the one we want to alter.
+    if ($block->getPluginId() === 'system_branding_block') {
+      // Add the library for AmCharts.
+      $build['#attached']['library'][] = 'custom_graphs/amcharts_library';
+    }
+  }
+  
+  /**
+   * Implements hook_page_attachments_alter().
+   */
+  function custom_graphs_page_attachments_alter(array &$attachments) {
+    // Add the library for AmCharts.
+    $attachments['#attached']['library'][] = 'custom_graphs/amcharts_library';
+  }
+/**
+ * Implements hook_library_info_build().
+ */
+function custom_graphs_library_info_build() {
+    $libraries['amcharts_library'] = [
+      'title' => 'AmCharts Library',
+      'version' => '5.x',
+      'js' => [
+        'https://cdn.amcharts.com/lib/5/index.js' => [],
+        'https://cdn.amcharts.com/lib/5/xy.js' => [],
+        'https://cdn.amcharts.com/lib/5/themes/Animated.js' => [],
+      ],
+    ];
+    return $libraries;
+  }
+    

@@ -1,0 +1,492 @@
+<?php
+
+namespace Drupal\freezer_graph\Controller;
+
+use Drupal\node\Entity\Node;
+use Drupal\Core\Controller\ControllerBase;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Mail\MailManagerInterface;
+use Drupal\Core\Language\LanguageInterface;
+use Drupal\Core\State\StateInterface;
+use Drupal\Core\Messenger\MessengerInterface;
+
+
+class FreezerDataController extends ControllerBase
+{
+        /**
+     * Receives data from the request, checks if the value is below the threshold, and sends an alert email if it is.
+     */
+    public function receiveData(Request $request)
+    {
+        $dataValues = [
+            'freezerOne' => [
+                'value' => $request->request->get('data1'),
+                'name' => $request->request->get('data2'),
+            ],
+            'freezerTwo' => [
+                'value' => $request->request->get('data3'),
+                'name' => $request->request->get('data4'),
+            ],
+            // 'freezerThree' => [
+            //     'value' => $request->request->get('data5'),
+            //     'name' => $request->request->get('data6'),
+            // ],
+        ];
+    
+        $current_time = \Drupal::time()->getRequestTime();
+        $formatted_time = date('Y-m-d H:i:s', $current_time);
+    
+        $responses = [];
+    
+        foreach ($dataValues as $key => $data) {
+            $term = $this->loadOrCreateTerm($data['name']);
+            $node_data = $this->createOrUpdateNode($data, $term, $formatted_time);
+    
+            //!CHECKING THRESHOLD VALUES AFTER CREATING/UPDATING FREEZER_NAMES CONTENT TYPE
+            $thresholds = $this->getThreshold($data['name']);
+    
+            if ($thresholds !== NULL) {
+                if ($data['value'] > $thresholds['maximum_threshold']) {
+                    \Drupal::messenger()->addMessage('Temperature is high: ' . $data['value'], MessengerInterface::TYPE_WARNING);
+                    $temperature_status = 'high';
+                    $this->handleFreezerAlert($data['name'], $data['value'], $temperature_status);
+                } elseif ($data['value'] < $thresholds['set_temperature']) {
+                    \Drupal::messenger()->addMessage('Temperature is low: ' . $data['value'], MessengerInterface::TYPE_WARNING);
+                    $temperature_status = 'low';
+                    $this->handleFreezerAlert($data['name'], $data['value'], $temperature_status);
+                } else {
+                    \Drupal::messenger()->addMessage('Temperature is within the acceptable range: ' . $data['value'], MessengerInterface::TYPE_STATUS);
+                    $temperature_status = 'normal';
+                   // $this->handleFreezerAlert($data['name'], $data['value'], $temperature_status);
+                }
+            } else {
+                \Drupal::messenger()->addMessage('Threshold values not found for: ' . $data['name'], MessengerInterface::TYPE_ERROR);
+                $temperature_status = 'thresholds_not_found';
+            }
+    
+            $responses[$key] = [
+                'node_id' => $node_data['node_id'],
+                'status' => 'success',
+                'message' => 'Data saved successfully',
+                'temperature' => $data['value'],
+                'temperature_status' => $temperature_status,
+            ];
+        }
+    
+        return new JsonResponse($responses);
+    }
+    
+        /**
+     * Loads or creates a taxonomy term for the given name.
+     */
+    // private function loadOrCreateTerm($name)
+    // {
+    //     // Check if the value is already present in the taxonomy.
+    //     $term_storage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
+    //     $term = $term_storage->loadByProperties(['name' => $name]);
+    //     if (empty($term)) {
+    //         // Value is not present, add it to the taxonomy.
+    //         $term = \Drupal\taxonomy\Entity\Term::create([
+    //             'vid' => 'freezer_name_list', // Replace 'freezer_name_list' with your vocabulary machine name.
+    //             'name' => $name,
+    //         ]);
+    //         $term->save();
+    //     } else {
+    //         // If the term exists, load the first matching term.
+    //         $term = reset($term);
+    //     }
+    //     return $term;
+    // }
+
+    private function loadOrCreateTerm($name)
+{
+    // Check if the value is already present in the taxonomy.
+    $term_storage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
+    $terms = $term_storage->loadByProperties(['name' => $name]);
+
+    if (empty($terms)) {
+        // Get all terms in the vocabulary to find the highest weight.
+        $all_terms = $term_storage->loadByProperties(['vid' => 'freezer_name_list']);
+        $max_weight = -1;
+        
+        // Iterate through all terms to find the maximum weight.
+        foreach ($all_terms as $existing_term) {
+            $weight = $existing_term->get('weight')->value;
+            if ($weight > $max_weight) {
+                $max_weight = $weight;
+            }
+        }
+
+        // Increment the maximum weight by 1 for the new term.
+        $new_weight = $max_weight + 1;
+
+        // Value is not present, add it to the taxonomy with the incremented weight.
+        $term = \Drupal\taxonomy\Entity\Term::create([
+            'vid' => 'freezer_name_list', // Replace 'freezer_name_list' with your vocabulary machine name.
+            'name' => $name,
+            'weight' => $new_weight,
+        ]);
+        $term->save();
+    } else {
+        // If the term exists, load the first matching term.
+        $term = reset($terms);
+    }
+    
+    return $term;
+}
+
+
+        /**
+     * Creates or updates a node with the given data.
+     */
+    private function createOrUpdateNode($data, $term, $formatted_time)
+    {
+        $node_storage = \Drupal::entityTypeManager()->getStorage('node');
+        $existing_node_query = $node_storage->getQuery()
+            ->condition('type', 'freezer_names')
+            ->condition('title', $data['name'])
+            ->range(0, 1)
+            ->accessCheck(FALSE);
+
+        $existing_nodes = $existing_node_query->execute();
+
+        $nodeData = \Drupal\node\Entity\Node::create([
+            'type' => 'freezer_data',
+            'title' => $data['name'] . ' Data Received on ' . $formatted_time,
+            'field_value' => $data['value'],
+            'field_time' => $formatted_time,
+            'field_f_names' => $data['name'],
+            'field_freezer_names' => $term->id(),
+        ]);
+        $nodeData->save();
+
+        if (empty($existing_nodes)) {
+            $node = \Drupal\node\Entity\Node::create([
+                'type' => 'freezer_names',
+                'title' => $data['name'],
+                'field_set_temperature' => 70,                    //    Min Temp Required if below this send email
+                'field_maximum_threshold' => 80,                  //    Max Temp  Required if above this send email
+            ]);
+        } else {
+            $existing_node_id = reset($existing_nodes);
+            $node = \Drupal\node\Entity\Node::load($existing_node_id);
+        }
+
+        $existing_references = $node->get('field_freezer_data')->referencedEntities();
+        $existing_references[] = $nodeData;
+        $node->set('field_freezer_data', $existing_references);
+        $node->save();
+
+        return [
+            'node_id' => $nodeData->id(),
+        ];
+    }
+
+    /**
+     * Gets the threshold value for a freezer from the corresponding node.
+     */
+    private function getThreshold($name)
+    {
+        $node_storage = \Drupal::entityTypeManager()->getStorage('node');
+        $existing_node_query = $node_storage->getQuery()
+            ->condition('type', 'freezer_names')
+            ->condition('title', $name)
+            ->range(0, 1)
+            ->accessCheck(FALSE);
+
+        $existing_nodes = $existing_node_query->execute();
+
+        if (!empty($existing_nodes)) {
+            $existing_node_id = reset($existing_nodes);
+            $node = \Drupal\node\Entity\Node::load($existing_node_id);
+
+            $thresholds = [];
+
+            if ($node->hasField('field_set_temperature') && !$node->get('field_set_temperature')->isEmpty()) {
+                $thresholds['set_temperature'] = (float) $node->get('field_set_temperature')->value;
+            }
+
+            if ($node->hasField('field_maximum_threshold') && !$node->get('field_maximum_threshold')->isEmpty()) {
+                $thresholds['maximum_threshold'] = (float) $node->get('field_maximum_threshold')->value;
+            }
+
+            return $thresholds;
+        }
+        return NULL;
+    }
+
+        /**
+     * Handles sending alert emails based on freezer value.
+     */
+    private function handleFreezerAlert($name, $value, $temperature_status)
+    {
+        $node_storage = \Drupal::entityTypeManager()->getStorage('node');
+        \Drupal::messenger()->addMessage("Loaded node storage.");
+
+        $existing_node_query = $node_storage->getQuery()
+            ->condition('type', 'freezer_names')
+            ->condition('title', $name)
+            ->range(0, 1)
+            ->accessCheck(FALSE);
+        \Drupal::messenger()->addMessage("Created node query.");
+
+        $existing_nodes = $existing_node_query->execute();
+        \Drupal::messenger()->addMessage("Executed node query.");
+
+        if (!empty($existing_nodes)) {
+            $existing_node_id = reset($existing_nodes);
+            $node = \Drupal\node\Entity\Node::load($existing_node_id);
+            \Drupal::messenger()->addMessage("Loaded node with ID: " . $existing_node_id);
+
+            //FIXME - $default_email = $this->getDefaultEmail();
+            $cc_emails = $this->getDefaultCcEmails();
+            $from_email = $this->getDefaultFromEmail();
+            if ($node->hasField('field_faculties')) {
+                \Drupal::messenger()->addMessage("Node has field 'field_faculties'.");
+                \Drupal::logger('freezer_graph')->debug("Node has field 'field_faculties'.");
+            
+                $faculty_field = $node->get('field_faculties');
+                \Drupal::messenger()->addMessage("Got 'field_faculties' field.");
+                \Drupal::logger('freezer_graph')->debug("Got 'field_faculties' field: " . json_encode($faculty_field->getValue()));
+            
+                if (!$faculty_field->isEmpty()) {
+                    $faculty_ids = $faculty_field->getValue();
+                    \Drupal::messenger()->addMessage("Got faculty IDs.");
+                    \Drupal::logger('freezer_graph')->debug("Got faculty IDs: " . implode(', ', array_column($faculty_ids, 'target_id')));
+            
+                    $user_emails = $this->getUserEmailsFromIds($faculty_ids);
+                    \Drupal::messenger()->addMessage("Got user emails.");
+                    \Drupal::logger('freezer_graph')->debug("Got user emails: " . implode(', ', $user_emails));
+            
+                    if (!empty($user_emails)) {
+                        \Drupal::messenger()->addMessage("Sending alert email.");
+                        \Drupal::logger('freezer_graph')->debug("Sending alert email to: " . implode(', ', $user_emails));
+                        $this->sendAlertEmail($name, $value, $temperature_status,  $user_emails, $cc_emails, $from_email);
+                        return;
+                    }
+                }
+            }
+            
+        }
+
+        // If no faculty emails are found, send email to default address
+        $default_email = $this->getDefaultEmail();
+        $cc_emails = $this->getDefaultCcEmails();
+        $from_email = $this->getDefaultFromEmail();
+        $this->sendAlertEmail($name, $value, $temperature_status,  [$default_email], $cc_emails, $from_email);
+    }
+
+
+    /**
+     * Gets user emails from user IDs.
+     */
+    private function getUserEmailsFromIds($user_ids)
+    {
+        $emails = [];
+        foreach ($user_ids as $user_id) {
+            $user = \Drupal\user\Entity\User::load($user_id['target_id']);
+            if ($user) {
+                $emails[] = $user->getEmail();
+            }
+        }
+        \Drupal::logger('freezer_graph')->debug("AAA:" . implode(',',$emails) );
+        return $emails;
+    }
+
+
+
+
+
+
+    private function sendAlertEmail($name, $value, $thresholdStatus, $emails, $ccEmails, $from_email)
+    {
+        $mailManager = \Drupal::service('plugin.manager.mail');
+        $module = 'freezer_graph'; // Replace with your module name.
+        $key = 'alert_email'; // Ensure this matches the key in freezer_graph_mail
+        $params = [
+            'message' => "NEW The value for freezer '{$name}' is below the threshold. Current value: {$value}. Threshold status: {$thresholdStatus}.",
+            'title' => 'NEW Alert: Freezer Value Below Threshold',
+            'from' => $from_email,
+            'ccEmails' => (array) $ccEmails
+        ];
+    
+        $langcode = \Drupal::currentUser()->getPreferredLangcode();
+        $send = true;
+    
+        // Log the parameters to debug
+        \Drupal::logger('freezer_graph')->info('Sending email with params: @params', ['@params' => print_r($params, TRUE)]);
+        \Drupal::messenger()->addMessage(t('Sending email with params: @params', ['@params' => print_r($params, TRUE)]));
+    
+        // Get the state service to store email sending history
+        $state = \Drupal::service('state');
+        $timestamp = \Drupal::time()->getRequestTime();
+        $emailHistory = $state->get('freezer_graph.email_history', []);
+    
+        // Initialize email history for the freezer name if not set
+        if (!isset($emailHistory[$name])) {
+            $emailHistory[$name] = [];
+        }
+    
+        // Filter history to keep only entries within the last 30 minutes
+        $emailHistory[$name] = array_filter($emailHistory[$name], function ($time) use ($timestamp) {
+            return ($timestamp - $time) <= 1800;
+        });
+    
+        // Debug: Log and display email history
+        \Drupal::logger('freezer_graph')->info('Email history for @name: @history', ['@name' => $name, '@history' => print_r($emailHistory[$name], TRUE)]);
+        \Drupal::messenger()->addMessage(t('Email history for @name: @history', ['@name' => $name, '@history' => print_r($emailHistory[$name], TRUE)]));
+    
+        // Check if the email was sent in the last 5 minutes continuously
+        if (count($emailHistory[$name]) >= 5) {
+            $reason = 'Skipping email to prevent spamming';
+            \Drupal::logger('freezer_graph')->notice($reason . ' for freezer ' . $name);
+            \Drupal::messenger()->addMessage(t('@reason for freezer @name.', ['@reason' => $reason, '@name' => $name]), 'warning');
+    
+            // Log the skipped email for all recipients
+            foreach ($emails as $to) {
+                $this->logEmail($to, $timestamp, 'skipped', $reason, $params['message'], $name, $value);
+            }
+            return;
+        }
+    
+        foreach ($emails as $to) {
+            $result = $mailManager->mail($module, $key, $to, $langcode, $params, NULL, $send);
+            if ($result['result'] !== true) {
+                $reason = 'There was a problem sending the alert email';
+                \Drupal::logger('freezer_graph')->error($reason . ' to ' . $to);
+                \Drupal::messenger()->addMessage(t('@reason to @to', ['@reason' => $reason, '@to' => $to]), 'error');
+                $this->logEmail($to, $timestamp, 'failed', $reason, $params['message'], $name, $value);
+            } else {
+                \Drupal::logger('freezer_graph')->notice('Alert email sent successfully to ' . $to);
+                \Drupal::messenger()->addMessage(t('Alert email sent successfully to @to', ['@to' => $to]), 'status');
+    
+                // Add current timestamp to email history for the freezer name
+                $emailHistory[$name][] = $timestamp;
+                // Log the sent email
+                $this->logEmail($to, $timestamp, 'sent', 'Email Sent', $params['message'], $name, $value);
+            }
+        }
+    
+        // Save the updated email history back to the state
+        $state->set('freezer_graph.email_history', $emailHistory);
+    
+        // Debug: Log and display updated email history
+        \Drupal::logger('freezer_graph')->info('Updated email history for @name: @history', ['@name' => $name, '@history' => print_r($emailHistory[$name], TRUE)]);
+        \Drupal::messenger()->addMessage(t('Updated email history for @name: @history', ['@name' => $name, '@history' => print_r($emailHistory[$name], TRUE)]));
+    }
+    
+    
+
+        /**
+     * Gets the default email address from the 'set_default_email_id' content type.
+     */
+    private function getDefaultEmail()
+    {
+        $node_storage = \Drupal::entityTypeManager()->getStorage('node');
+        $default_email_query = $node_storage->getQuery()
+            ->condition('type', 'set_default_email_id')
+            ->condition('title', 'Default Emails')
+            ->range(0, 1)
+            ->accessCheck(FALSE);
+
+        $default_email_nodes = $default_email_query->execute();
+
+        if (!empty($default_email_nodes)) {
+            $default_email_node_id = reset($default_email_nodes);
+            $node = \Drupal\node\Entity\Node::load($default_email_node_id);
+
+            if ($node->hasField('field_set_default_email_id') && !$node->get('field_set_default_email_id')->isEmpty()) {
+                return $node->get('field_set_default_email_id')->value;
+            }
+        }
+
+        // Fallback to a static default email if none found
+        return 'sahilst@ext.ncbs.res.in';
+    }
+
+    /**
+     * Gets the default CC email addresses from the 'set_default_email_id' content type.
+     */
+    private function getDefaultCcEmails()
+    {
+        $ccEmails = [];
+        $node_storage = \Drupal::entityTypeManager()->getStorage('node');
+        $default_email_query = $node_storage->getQuery()
+            ->condition('type', 'set_default_email_id')
+            ->condition('title', 'Default Emails')
+            ->range(0, 1)
+            ->accessCheck(FALSE);
+
+        $default_email_nodes = $default_email_query->execute();
+
+        if (!empty($default_email_nodes)) {
+            $default_email_node_id = reset($default_email_nodes);
+            $node = \Drupal\node\Entity\Node::load($default_email_node_id);
+
+            if ($node->hasField('field_set_emails_to_cc') && !$node->get('field_set_emails_to_cc')->isEmpty()) {
+                foreach ($node->get('field_set_emails_to_cc') as $cc_email) {
+                    $ccEmails[] = $cc_email->value;
+                }
+            }
+        }
+
+        // Fallback to static CC emails if none found
+        if (empty($ccEmails)) {
+            //$ccEmails = ['sahiltari36@gmail.com', 'sahiltari007@gmail.com', 'garrysnake47@gmail.com'];
+            $ccEmails = [];
+        }
+
+        return $ccEmails;
+    }
+
+    /**
+     * Gets the default "from" email address from the 'set_default_email_id' content type.
+     */
+    private function getDefaultFromEmail()
+    {
+        \Drupal::messenger()->addMessage("pp");
+        $node_storage = \Drupal::entityTypeManager()->getStorage('node');
+        $default_email_query = $node_storage->getQuery()
+            ->condition('type', 'set_default_email_id')
+            ->condition('title', 'Default Emails')
+            ->range(0, 1)
+            ->accessCheck(FALSE);
+
+        $default_email_nodes = $default_email_query->execute();
+
+        if (!empty($default_email_nodes)) {
+            $default_email_node_id = reset($default_email_nodes);
+            $node = \Drupal\node\Entity\Node::load($default_email_node_id);
+
+            if ($node->hasField('field_set_from_email_id') && !$node->get('field_set_from_email_id')->isEmpty()) {
+                return $node->get('field_set_from_email_id')->value;
+            }
+        }
+
+        // Fallback to a static "from" email if none found
+        return 'noreply@ncbs.res.in';
+    }
+
+    /**
+     * Logs email details in the Email Log content type.
+     */
+    private function logEmail($email, $timestamp, $status, $reason, $message, $name, $value)
+    {
+        $node = Node::create([
+            'type' => 'email_log',
+            'title' => t('Email Log: @status - @timestamp', ['@status' => $status, '@timestamp' => date('Y-m-d H:i:s', $timestamp)]),
+            'field_email' => $email,
+            'field_timestamp' => date('Y-m-d\TH:i:s', $timestamp),
+            'field_status' => $status,
+            'field_reason' => $reason,
+            'field_message' => $message,
+            'field_freezer_name_log' => $name,
+            'field_current_temperature' => $value,
+        ]);
+        $node->save();
+    }
+
+}
+

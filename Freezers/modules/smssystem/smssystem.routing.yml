@@ -1,0 +1,82 @@
+# Configuration management routes.
+smssystem.system:
+  path: '/admin/config/system/smssystem'
+  defaults:
+    _form: '\Drupal\smssystem\Form\SmsSystemConfigForm'
+    _title: 'SMS System - Configurations'
+  requirements:
+    _permission: 'administer sms system'
+
+smssystem.api:
+  path: '/admin/config/system/smssystem/api'
+  defaults:
+    _form: '\Drupal\smssystem\Form\SmsSystemApiConfigForm'
+    _title: 'SMS System - API'
+  requirements:
+    _permission: 'administer sms system'
+
+smssystem.sms_queue_list:
+  path: '/admin/config/system/smssystem/sms-queue-list'
+  defaults:
+    _controller: '\Drupal\smssystem\Controller\SmsQueueList::buildList'
+    _title: 'SMS - Queue list'
+  requirements:
+    _permission: 'administer sms system'
+
+# SMS Message Template entity routes.
+entity.sms_message_template.canonical:
+  path: '/admin/config/system/smssystem/templates/{sms_message_template}'
+  defaults:
+    _entity_view: 'sms_message_template'
+    _title: 'View - SMS Message Template'
+  requirements:
+    _entity_access: 'sms_message_template.view'
+
+entity.sms_message_template.collection:
+  path: '/admin/config/system/smssystem/templates/list'
+  defaults:
+    _entity_list: 'sms_message_template'
+    _title: 'SMS Message Templates List'
+  requirements:
+    _permission: 'administer sms_message_template entity'
+
+entity.sms_message_template.add:
+  path: '/admin/config/system/smssystem/templates/add'
+  defaults:
+    _entity_form: sms_message_template.add
+    _title: 'Add SMS Message Template'
+  requirements:
+    _entity_create_access: 'sms_message_template'
+
+entity.sms_message_template.edit_form:
+  path: '/admin/config/system/smssystem/templates/{sms_message_template}/edit'
+  defaults:
+    _entity_form: sms_message_template.edit
+    _title: 'Edit SMS Message Template'
+  requirements:
+    _entity_access: 'sms_message_template.edit'
+
+entity.sms_message_template.delete_form:
+  path: '/admin/config/system/smssystem/templates/{sms_message_template}/delete'
+  defaults:
+    _entity_form: sms_message_template.delete
+    _title: 'Delete - SMS Message Template'
+  requirements:
+    _entity_access: 'sms_message_template.delete'
+
+# SMS Entity routes.
+entity.sms.canonical:
+  path: '/admin/config/system/smssystem/sms/{sms}'
+  defaults:
+    _entity_view: 'sms'
+    _title: 'View - SMS'
+  requirements:
+    _entity_access: 'sms.view'
+
+entity.sms.delete_form:
+  path: '/admin/config/system/smssystem/sms/{sms}/delete'
+  defaults:
+    _entity_form: sms.delete
+    _title: 'Delete - SMS'
+  requirements:
+    _entity_access: 'sms.delete'

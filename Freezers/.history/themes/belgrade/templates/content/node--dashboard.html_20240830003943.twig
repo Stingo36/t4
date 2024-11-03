@@ -1,0 +1,61 @@
+<div class="card shadow-sm p-3 mb-5 bg-white rounded" style="width: 18rem;">
+  <div class="d-flex align-items-center">
+    <div class="icon-container">
+      <img src="/Freezers/themes/belgrade/images/closeFreezers.png" alt="Freezer Icon" class="img-fluid">
+    </div>
+    <div class="ms-auto text-center">
+      <h3 class="number-display mb-0">10</h3>
+    </div>
+  </div>
+  <div class="text-center mt-3">
+    <a href="/Freezers/freezer-history" class="custom-button">VIEW DETAILS</a>
+  </div>
+</div>
+
+<style>
+.icon-container {
+  width: 50px; /* Adjust as needed */
+}
+
+.number-display {
+  font-size: 2rem; /* Adjust size as needed */
+  font-weight: bold;
+}
+
+.card {
+  padding: 20px;
+  border-radius: 12px;
+  text-align: left;
+}
+
+.custom-button {
+  display: inline-block;
+  padding: 12px 30px;
+  font-size: 16px;
+  font-weight: bold;
+  color: white;
+  text-decoration: none;
+  background-color: #333; /* Dark background color */
+  border-radius: 40px; /* Rounded corners for the button */
+  position: relative;
+  transition: transform 0.3s, box-shadow 0.3s; /* Smooth hover effects */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Initial shadow */
+}
+
+.custom-button:after {
+  content: '';
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 18px;
+  height: 18px;
+  background-color: #f56a79; /* Circle color */
+  border-radius: 50%;
+}
+
+.custom-button:hover {
+  transform: scale(1.05); /* Slightly enlarges the button on hover */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); /* Adds a shadow on hover */
+}
+</style>

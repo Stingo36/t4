@@ -1,0 +1,11 @@
+name: Simple Twilio SMS
+type: module
+description: 'Integrates Twilio SMS Services.'
+core: 8.x
+core_version_requirement: ^8 || ^9 || ^10
+configure: simple_twilio.settings
+
+# Information added by Drupal.org packaging script on 2024-05-02
+version: '2.0.0'
+project: 'simple_twilio'
+datestamp: 1714639429

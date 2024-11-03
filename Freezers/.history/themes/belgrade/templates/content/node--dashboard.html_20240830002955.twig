@@ -1,0 +1,53 @@
+<style>
+  .card {
+    border-radius: 15px;
+    padding: 15px;
+    background-color: #f8f9fa;
+    max-width: 400px; /* Reduced size */
+    margin: 20px 0; /* Removed auto centering */
+    text-align: center;
+    position: relative;
+    left: 0; /* Move card to the left */
+  }
+  .card-header {
+    font-size: 20px; /* Smaller font size */
+    font-weight: bold;
+  }
+  .large-number {
+    font-size: 40px; /* Smaller large number */
+    font-weight: bold;
+    margin-top: 5px;
+  }
+  .stats-container {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 15px;
+  }
+  .stats {
+    text-align: center;
+  }
+  .icon-circle {
+    display: inline-block;
+    width: 40px; /* Smaller icon size */
+    height: 40px; /* Smaller icon size */
+    border-radius: 50%;
+    background-color: #e9ecef;
+    line-height: 40px;
+    font-size: 16px; /* Smaller font size */
+    font-weight: bold;
+  }
+  .image-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 15px;
+  }
+</style>
+
+<div class="card shadow-lg">
+  <div class="card-header">All Freezers</div>
+  <div class="image-container">
+    <img src="/Freezers/themes/belgrade/images/closeFreezers.png" class="img-fluid mt-3" alt="Freezer Image" style="max-width: 100px;"> <!-- Centered image -->
+  </div>
+  <div class="large-number">10</div>
+  <a href="/Freezers/freezer-history" class="btn btn-link details-link mt-2">View Details</a> <!-- Changed button to link -->
+</div>

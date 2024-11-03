@@ -1,0 +1,11 @@
+name: Twilio
+description: "Integration the Twilio cloud communication service with Drupal."
+package: Twilio
+core_version_requirement: ^8 || ^9 || ^10
+type: module
+configure: twilio.admin_form
+
+# Information added by Drupal.org packaging script on 2024-03-07
+version: '8.x-3.0-alpha16'
+project: 'twilio'
+datestamp: 1709818981

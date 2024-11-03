@@ -1,0 +1,55 @@
+<?php
+
+/**
+ * @file
+ * Primary module hooks for Metatag Auto Pagination module.
+ *
+ * @DCG
+ * This file is no longer required in Drupal 8.
+ * @see https://www.drupal.org/node/2217931
+ */
+
+use Drupal\metatag_auto_pagination\Services\PagerManager;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function metatag_auto_pagination_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    case 'help.page.metatag_auto_pagination':
+      $output = '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('This module is a dependency of the <a href ="https://www.drupal.org/project/metatag">MetaTag</a> module.
+      It provides configurations that enables header tags link prev and next in a pagination context.') . '</p>';
+      $output .= '<h3>' . t('Configuration') . '</h3>';
+      $output .= '<ul>' . t('<li>Go to: <b>Admin » Configuration » Search and metadata » Metatag (/admin/config/search/metatag)</b>.</li><li>In the "Basic" part, you can find the "AUTO PAGER LINKS" section.</li><li>Enable the service.</li>') . '</ul>';
+      return $output;
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function metatag_auto_pagination_preprocess_pager(&$variables) {
+  PagerManager::instance()->addCurrentPager($variables);
+}
+
+/**
+ * Implements hook_page_attachments_alter().
+ */
+function metatag_auto_pagination_page_attachments_alter(array &$attachments) {
+  PagerManager::instance()
+    ->initHeaderAttachment($attachments["#attached"]["html_head"]);
+}
+
+/**
+ * Implements hook_preprocess().
+ */
+function metatag_auto_pagination_preprocess_views_view(&$variables, $hook) {
+  if (empty($variables['rows'])) {
+    if (\Drupal::request()->query->get('page') > 0) {
+      throw new NotFoundHttpException();
+    }
+  }
+}

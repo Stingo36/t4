@@ -1,0 +1,51 @@
+ldap_auth.admin:
+  version: VERSION
+  css:
+    layout:
+      css/ldap_auth.admin.css: {}
+
+ldap_auth.style_settings:
+  version: VERSION
+  css:
+    layout:
+      css/ldap_auth.style_settings.css: {}
+
+ldap_auth.main:
+  version: VERSION
+  css:
+    layout:
+      css/ldap_auth.main.css: {}
+  js:
+    js/ldap_auth.main.js : {}
+
+ldap_auth.test:
+  version: VERSION
+  js:
+    js/testConfig.js: {}
+
+# Below library is used to show tooltip
+# You can find original library at https://atomiks.github.io/tippyjs/
+ldap_auth.tippyjs:
+  remote: https://github.com/atomiks/tippyjs
+  version: '6.3.7'
+  license:
+    name: MIT
+    url: https://github.com/atomiks/tippyjs/blob/master/LICENSE
+    gpl-compatible: true
+  js:
+    js/popper.min.js: {}
+    js/tippy-bundle.umd.min.js: {}
+  dependencies:
+    - core/popperjs
+    - core/jquery
+
+ldap_auth.mo_ldap_tooltip:
+  version: VERSION
+  js:
+    js/mo_ldap_tooltip.js: {}
+  dependencies:
+    - core/jquery
+    - core/drupal
+    - core/jquery.once
+    - core/once
+    - ldap_auth/ldap_auth.tippyjs

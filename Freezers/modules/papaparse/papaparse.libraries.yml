@@ -1,0 +1,10 @@
+papaparse:
+  remote: https://github.com/mholt/PapaParse
+  version: 5.3.0
+  license:
+    name: MIT
+    url: https://raw.githubusercontent.com/mholt/PapaParse/master/LICENSE
+    gpl-compatible: true
+  js:
+    https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js:
+      { type: external, minified: true }

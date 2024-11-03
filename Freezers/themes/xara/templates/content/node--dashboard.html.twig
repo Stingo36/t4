@@ -1,0 +1,80 @@
+<div class="container">
+    <div class="row">
+        <!-- Card for All -->
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card text-white shadow-sm card-hover card-all">
+                <div class="card-body">
+                    <h2 class="card-title text-uppercase font-weight-bold">All</h2>
+                    <h4 class="card-text font-weight-bold">{{ freezer_names_total_count }}</h4>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card for Published -->
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card text-white shadow-sm card-hover card-published">
+                <div class="card-body">
+                    <h2 class="card-title text-uppercase font-weight-bold">UP</h2>
+                    <h4 class="card-text font-weight-bold">{{ freezer_names_published_count }}</h4>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card for Unpublished -->
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card text-white shadow-sm card-hover card-unpublished">
+                <div class="card-body">
+                    <h2 class="card-title text-uppercase font-weight-bold">Down</h2>
+                    <h4 class="card-text font-weight-bold">{{ freezer_names_unpublished_count }}</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card-hover {
+        position: relative;
+        overflow: hidden;
+        padding: 1rem;
+        border-radius: 10px;
+        border: 4px solid;
+        transition: all 0.3s ease;
+        background-repeat: no-repeat; /* Prevent the image from repeating */
+        background-position: right bottom; /* Position the image at the bottom right */
+        background-size: cover, 88px; /* Gradient fills the card, image is 88px wide */
+    }
+
+    /* Different background colors for each card */
+    .card-all {
+        background: linear-gradient(to right, rgba(19, 47, 97, 0.9), rgba(33, 100, 180, 0.8)), 
+                    url('/Freezers/themes/xara/images/freezer.png');
+                    background-repeat: no-repeat; /* Prevent the image from repeating */
+                    background-position: right bottom; /* Position the image at the bottom right */
+                    background-size: cover, 88px; /
+        border-image: linear-gradient(to right, rgba(19, 47, 97, 1), rgba(33, 100, 180, 1)) 1;
+    }
+
+    .card-published {
+        background: linear-gradient(to right, rgba(34, 139, 34, 0.9), rgba(50, 205, 50, 0.8)), 
+                    url('/Freezers/themes/xara/images/freezer.png');
+                    background-repeat: no-repeat; /* Prevent the image from repeating */
+                    background-position: right bottom; /* Position the image at the bottom right */
+                    background-size: cover, auto; /
+        border-image: linear-gradient(to right, rgba(34, 139, 34, 1), rgba(50, 205, 50, 1)) 1;
+    }
+
+    .card-unpublished {
+        background: linear-gradient(to right, rgba(139, 0, 0, 0.9), rgba(255, 69, 0, 0.8)), 
+                    url('/Freezers/themes/xara/images/freezer.png');
+                    background-repeat: no-repeat; /* Prevent the image from repeating */
+                    background-position: right bottom; /* Position the image at the bottom right */
+                    background-size: cover, 188px; /
+        border-image: linear-gradient(to right, rgba(139, 0, 0, 1), rgba(255, 69, 0, 1)) 1;
+    }
+
+    .card-hover:hover {
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        transform: translateY(-5px);
+    }
+</style>

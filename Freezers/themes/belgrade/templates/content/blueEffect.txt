@@ -1,0 +1,139 @@
+<div class="card-container d-flex justify-content-center">
+  <div class="card custom-card shadow-sm p-3 mb-5 bg-white rounded" style="width: 18rem;">
+    <div class="card-title-container text-center">
+      <span class="circle-decoration"></span>
+      <h2 class="custom-card-title">All Freezers</h2>
+      <span class="circle-decoration"></span>
+    </div>
+    <div class="d-flex justify-content-center align-items-center">
+      <div class="icon-container">
+        <img src="/Freezers/themes/belgrade/images/closeFreezers.png" alt="Freezer Icon" class="img-fluid">
+      </div>
+      <h3 class="number-display mb-0 ms-2">{{ freezer_names_total_count }}</h3>
+    </div>
+    <div class="text-center mt-3">
+      <a href="/Freezers/freezer-history-all" class="custom-button">View Details</a>
+    </div>
+  </div>
+
+  <div class="card custom-card shadow-sm p-3 mb-5 bg-white rounded" style="width: 18rem;">
+    <div class="card-title-container text-center">
+      <span class="circle-decoration"></span>
+      <h2 class="custom-card-title">Active Freezers</h2>
+      <span class="circle-decoration"></span>
+    </div>
+    <div class="d-flex justify-content-center align-items-center">
+      <div class="icon-container">
+        <img src="/Freezers/themes/belgrade/images/closeFreezers.png" alt="Freezer Icon" class="img-fluid">
+      </div>
+      <h3 class="number-display mb-0 ms-2">{{ freezer_names_published_count }}</h3>
+    </div>
+    <div class="text-center mt-3">
+      <a href="/Freezers/freezer-history-active" class="custom-button">View Details</a>
+    </div>
+  </div>
+
+  <div class="card custom-card shadow-sm p-3 mb-5 bg-white rounded" style="width: 18rem;">
+    <div class="card-title-container text-center">
+      <span class="circle-decoration"></span>
+      <h2 class="custom-card-title">Inactive Freezers</h2>
+      <span class="circle-decoration"></span>
+    </div>
+    <div class="d-flex justify-content-center align-items-center">
+      <div class="icon-container">
+        <img src="/Freezers/themes/belgrade/images/openFreezer.png" alt="Freezer Icon" class="img-fluid">
+      </div>
+      <h3 class="number-display mb-0 ms-2">{{ freezer_names_unpublished_count }}</h3>
+    </div>
+    <div class="text-center mt-3">
+      <a href="/Freezers/freezer-history-inactive" class="custom-button">View Details</a>
+    </div>
+  </div>
+</div>
+
+
+<style>
+  .card-container {
+  display: flex;
+  justify-content: center; /* Centers both cards within the container */
+  gap: 20px; /* Adds spacing between the cards */
+  flex-wrap: wrap; /* Ensures that cards wrap on smaller screens */
+}
+
+.icon-container {
+  width: 40px; /* Adjust the size for alignment */
+  display: flex; /* Flex to align items properly */
+  justify-content: center; /* Center align the icon */
+  align-items: center; /* Center align the icon vertically */
+}
+
+.number-display {
+  font-size: 3rem; /* Bigger size for more prominence */
+  font-weight: bold;
+  margin: 0; /* Remove margin to align closely with the icon */
+  color: #333;
+}
+
+.custom-card {
+  padding: 20px;
+  border-radius: 12px;
+  text-align: center;
+  transition: background-color 0.3s, box-shadow 0.3s; /* Include background-color in transition */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Initial shadow for the card */
+  background: linear-gradient(145deg, #ffffff, #f0f0f0); /* Initial light gradient effect */
+}
+
+.custom-card:hover {
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2); /* Enhanced shadow on hover */
+  background: linear-gradient(to right, #87CEEB, #00BFFF); /* Change to sky blue gradient on hover */
+  border: 2px solid rgba(0, 0, 0, 0.1); /* Optional border on hover */
+}
+
+.card-title-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 15px;
+  position: relative;
+}
+
+.custom-card-title {
+  font-size: 24px; /* Adjust the font size as needed */
+  font-weight: bold;
+  margin: 0 10px;
+  font-family: 'Georgia', serif; /* Serif-like font */
+  color: #333;
+  position: relative;
+}
+
+.circle-decoration {
+  width: 10px;
+  height: 10px;
+  background-color: #333;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.custom-button {
+  display: inline-block;
+  padding: 8px 25px; /* Reduced padding for smaller text */
+  font-size: 14px; /* Smaller font size for the button */
+  font-weight: bold;
+  color: white; /* Initial text color */
+  text-decoration: none;
+  background-color: #333; /* Dark background color */
+  border: 2px solid #333; /* Add a border */
+  border-radius: 40px; /* Rounded corners for the button */
+  position: relative;
+  transition: transform 0.3s, box-shadow 0.3s, color 0.3s, background-color 0.3s; /* Smooth hover effects */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Initial shadow */
+  background: linear-gradient(to right, #333, #444); /* Add a gradient to match initial color */
+}
+
+.custom-button:hover {
+  transform: scale(1.05); /* Slightly enlarges the button on hover */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); /* Adds a shadow on hover */
+  color: #333; /* Change text color to black */
+  background: linear-gradient(to right, #87CEEB, #00BFFF); /* Change to sky blue gradient */
+  border: 2px solid #333; /* Keep border black */
+}

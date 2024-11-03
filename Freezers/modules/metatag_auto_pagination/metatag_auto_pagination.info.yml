@@ -1,0 +1,12 @@
+name: Metatag Auto Pagination
+type: module
+description: Automatically generates next and prev link meta tag in pagination context
+package: SEO
+core_version_requirement: ^9 || ^10
+dependencies:
+  - drupal:metatag
+
+# Information added by Drupal.org packaging script on 2023-06-26
+version: '1.0.0-rc4'
+project: 'metatag_auto_pagination'
+datestamp: 1687791250

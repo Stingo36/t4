@@ -1,0 +1,5 @@
+services:
+  freezer_graph.subscriber:
+    class: Drupal\freezer_graph\EventSubscriber\FreezerGraphSubscriber
+    tags:
+      - { name: event_subscriber }

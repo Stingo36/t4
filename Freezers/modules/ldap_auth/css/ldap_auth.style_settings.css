@@ -1,0 +1,29 @@
+#miniorange_ldap_protocol{
+	width:30%;
+	border-radius: 12px;
+	padding: 10px;
+}
+
+
+#button_config{
+	background-color: #008CBA;
+	border: none;
+	color:black;
+	padding: 12px 24px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	border-radius: 12px;
+	font-size: 16px;
+}
+
+.custom-table-properties{
+  border: none;
+}
+.shift-text-left{
+  text-align: left;
+}
+
+.td_alignment{
+text-align: center;
+}

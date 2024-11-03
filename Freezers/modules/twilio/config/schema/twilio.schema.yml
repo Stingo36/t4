@@ -1,0 +1,29 @@
+twilio.settings:
+  type: mapping
+  label: Settings
+  mapping:
+    account:
+      type: string
+      label: 'Twilio Account SID'
+    token:
+      type: string
+      label: 'Twilio authentication token'
+    number:
+      type: string
+      label: 'Twilio Phone Number'
+    confirmation_code_text:
+      type: string
+      label: 'Edit label for Confirmation Code'
+    long_sms:
+      type: string
+      label: 'Long SMS handling'
+    registration_form:
+      type: string
+      label: 'Show mobile fields during user registration'
+    twilio_country_codes_container:
+      type: sequence
+      country_codes:
+        type: sequence
+    capture_messages:
+      type: boolean
+      label: 'Capture messages to log locally, without sending SMS'

@@ -1,0 +1,314 @@
+/*Font Loded*/
+
+@import url(http://fonts.googleapis.com/css?family=Roboto:400,700);
+
+
+body {
+    color: #333;
+    background: #fff;
+    font: normal 81.3%/1.538em "Lucida Grande", "Lucida Sans Unicode", "DejaVu Sans", "Lucida Sans", sans-serif;
+}
+
+
+
+.container {
+    width: 100%;
+}
+
+
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+table.mo_upgrade_plans_features td, th {
+    border: 1px solid #dddddd;
+    text-align: center;
+    padding: 8px;
+}
+
+tr:nth-child(even) {
+    background-color: #dddddd;
+}
+
+.upgrade_step {
+    width: 100%;
+    height: 50px;
+    margin: 5%;
+    padding-right: 5%;
+}
+
+.payment_method_inner_divs {
+    border-radius: 0px 50px 0px 50px;
+    margin: auto;
+    text-align: center;
+    padding: 2%;
+}
+
+
+.payment_img {
+    width: 30% !important;
+    height: 30% !important;
+}
+
+.upgrade_steps_wise {
+    color: #e67e22;
+    border: 2px solid #e67e22;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    text-align: center;
+    padding: 10px;
+    float: left;
+    font-size: 20px;
+    margin-right: 25px;
+    margin-bottom: 27px;
+}
+
+.payment_method_inner_divs:hover {
+    transform: scale(1.2);
+}
+
+table.mo_upgrade_plans_features table tr td {
+    text-align: center;
+}
+
+table.mo_upgrade_plans_features table tr th {
+    text-align: center;
+}
+
+.accordion-item {
+    margin: auto;
+}
+
+
+/*Bootstrap*/
+
+.container,
+.container-fluid,
+.container-lg,
+.container-md,
+.container-sm,
+.container-xl,
+.container-xxl {
+    width: 100%;
+    padding-right: var(--bs-gutter-x, .75rem);
+    padding-left: var(--bs-gutter-x, .75rem);
+    margin-right: auto;
+    margin-left: auto
+}
+
+@media (min-width:576px) {
+    .container,
+    .container-sm {
+        max-width: 540px
+    }
+}
+
+@media (min-width:768px) {
+    .container,
+    .container-md,
+    .container-sm {
+        max-width: 720px
+    }
+}
+
+@media (min-width:992px) {
+    .container,
+    .container-lg,
+    .container-md,
+    .container-sm {
+        max-width: 960px
+    }
+}
+
+@media (min-width:1200px) {
+    .container,
+    .container-lg,
+    .container-md,
+    .container-sm,
+    .container-xl {
+        max-width: 98%
+    }
+}
+
+@media (min-width:1400px) {
+    .container,
+    .container-lg,
+    .container-md,
+    .container-sm,
+    .container-xl,
+    .container-xxl {
+        max-width: 98%
+    }
+}
+
+.navbar>.container,
+.navbar>.container-fluid,
+.navbar>.container-lg,
+.navbar>.container-md,
+.navbar>.container-sm,
+.navbar>.container-xl,
+.navbar>.container-xxl {
+    display: flex;
+    flex-wrap: inherit;
+    align-items: center;
+    justify-content: space-between
+}
+
+.row {
+    --bs-gutter-x: 1.5rem;
+    --bs-gutter-y: 0;
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: calc(-1 * var(--bs-gutter-y));
+    margin-right: calc(-.5 * var(--bs-gutter-x));
+    margin-left: calc(-.5 * var(--bs-gutter-x))
+}
+
+.row>* {
+    flex-shrink: 0;
+    width: 100%;
+    max-width: 100%;
+    padding-right: calc(var(--bs-gutter-x) * .5);
+    padding-left: calc(var(--bs-gutter-x) * .5);
+    margin-top: var(--bs-gutter-y)
+}
+
+.row-cols-auto>* {
+    flex: 0 0 auto;
+    width: auto
+}
+
+.row-cols-1>* {
+    flex: 0 0 auto;
+    width: 100%
+}
+
+.row-cols-2>* {
+    flex: 0 0 auto;
+    width: 50%
+}
+
+.row-cols-3>* {
+    flex: 0 0 auto;
+    width: 33.3333333333%
+}
+
+.row-cols-4>* {
+    flex: 0 0 auto;
+    width: 25%
+}
+
+.row-cols-5>* {
+    flex: 0 0 auto;
+    width: 20%
+}
+
+.row-cols-6>* {
+    flex: 0 0 auto;
+    width: 16.6666666667%
+}
+
+
+.col {
+    flex: 1 0 0%
+}
+
+.col-auto {
+    flex: 0 0 auto;
+    width: auto
+}
+
+.col-md-6 {
+    flex: 0 0 47%;
+    width: 47%;
+}
+
+.col-md-3 {
+    flex: 0 0 auto;
+    width: 25%
+}
+
+@media (prefers-reduced-motion:reduce) {
+    .accordion-button {
+        transition: none
+    }
+}
+
+
+.collapsible {
+    background-color: white;
+    color: black;
+    cursor: pointer;
+    padding: 18px;
+    width: 100%;
+    border: none;
+    text-align: left;
+    outline: none;
+    font-size: 15px;
+    margin: 1%!important;
+}
+
+.active,
+.collapsible:hover {
+    background-color: white;
+    border: 2px solid #C2DBFE;
+}
+
+.content {
+    padding: 0 18px;
+    display: none;
+    overflow: hidden;
+    background-color: aliceblue;
+}
+
+.mo_top_bar_button{
+    margin-right: 1em !important;
+}
+
+
+table.mo_upgrade_plans_features td{
+    /*text-align: center;*/
+    /*height: 2em;*/
+    /*font-weight: 600;*/
+    /*width: 25% !important;*/
+    text-align: left;
+    height: 2em;
+    /*font-weight: 600;*/
+    font-size: 115%;
+    width: 23% !important;
+}
+
+table.mo_upgrade_plans_features td+td, table.mo_upgrade_plans_features td+td+td, table.mo_upgrade_plans_features td+td+td+td {
+    text-align: center;
+    width: 13% !important;
+    box-sizing: content-box;
+}
+
+
+table.mo_upgrade_plans_features tbody>:nth-child(1){
+    color: white !important;
+    background-color: #34495e !important;
+}
+
+table.mo_upgrade_plans_features tbody>:nth-child(even){
+    background-color: rgba(240, 240, 243, 0.51);
+}
+
+table.mo_trial_features tbody>:nth-child(even){
+    background-color: rgb(255, 255, 255);
+}
+
+.mo_upgrade_plans_features{
+    margin: 0 1em !important;
+    width: auto;
+}
+
+.mo_ldap_pricing-rate {
+    font-size: 250%;
+    font-weight: 600;
+    position: relative;
+    text-align: center;
+}

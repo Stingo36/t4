@@ -1,0 +1,10 @@
+services:
+  freezer_graph.event_subscriber:
+    class: Drupal\freezer_graph\EventSubscriber\FreezerGraphSubscriber
+    arguments:
+      - '@state'
+      - '@logger.factory'
+      - '@date.formatter'
+      - '@file_system'
+    tags:
+      - { name: event_subscriber }

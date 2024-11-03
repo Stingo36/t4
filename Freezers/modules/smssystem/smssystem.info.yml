@@ -1,0 +1,15 @@
+name: SMS System
+description: A tool with API used for sending SMS using events triggering.
+package: SMS
+dependencies:
+  - drupal:date_popup
+  - drupal:token
+  - drupal:views
+  - views_data_export:views_data_export
+type: module
+core_version_requirement: ^8.8 || ^9 || ^10
+
+# Information added by Drupal.org packaging script on 2024-03-18
+version: '1.0.6'
+project: 'smssystem'
+datestamp: 1710768205

@@ -1,0 +1,93 @@
+<div class="card custom-card shadow-sm p-3 mb-5 bg-white rounded" style="width: 18rem;">
+  <div class="card-title-container text-center">
+    <span class="circle-decoration"></span>
+    <h2 class="custom-card-title">All Freezers</h2>
+    <span class="circle-decoration"></span>
+  </div>
+  <div class="d-flex align-items-center">
+    <div class="icon-container">
+      <img src="/Freezers/themes/belgrade/images/closeFreezers.png" alt="Freezer Icon" class="img-fluid">
+    </div>
+    <div class="ms-auto text-center">
+      <h3 class="number-display mb-0">10</h3>
+    </div>
+  </div>
+  <div class="text-center mt-3">
+    <a href="/Freezers/freezer-history" class="custom-button">View Details</a>
+  </div>
+</div>
+
+<style>
+.icon-container {
+  width: 50px; /* Adjust as needed */
+}
+
+.number-display {
+  font-size: 2rem; /* Adjust size as needed */
+  font-weight: bold;
+}
+
+.custom-card {
+  padding: 20px;
+  border-radius: 12px;
+  text-align: left;
+  transition: transform 0.3s, box-shadow 0.3s; /* Smooth hover effects for the card */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Initial shadow for the card */
+}
+
+.card-title-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 15px;
+  position: relative;
+}
+
+.custom-card-title {
+  font-size: 24px; /* Adjust the font size as needed */
+  font-weight: bold;
+  margin: 0 10px;
+  font-family: 'Georgia', serif; /* Serif-like font */
+  color: #333;
+  position: relative;
+}
+
+.circle-decoration {
+  width: 10px;
+  height: 10px;
+  background-color: #333;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.custom-button {
+  display: inline-block;
+  padding: 8px 25px; /* Reduced padding for smaller text */
+  font-size: 14px; /* Smaller font size for the button */
+  font-weight: bold;
+  color: white;
+  text-decoration: none;
+  background-color: #333; /* Dark background color */
+  border-radius: 40px; /* Rounded corners for the button */
+  position: relative;
+  transition: transform 0.3s, box-shadow 0.3s; /* Smooth hover effects */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Initial shadow */
+}
+
+.custom-button:after {
+  content: '';
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 18px;
+  height: 18px;
+  background-color: #f56a79; /* Circle color */
+  border-radius: 50%;
+}
+
+.custom-button:hover {
+  transform: scale(1.05); /* Slightly enlarges the button on hover */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); /* Adds a shadow on hover */
+}
+</style>

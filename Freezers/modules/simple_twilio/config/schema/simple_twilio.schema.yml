@@ -1,0 +1,15 @@
+# Schema for the configuration files of the simple_twilio module.
+
+simple_twilio.settings:
+  type: config_object
+  label: 'Simple Twilio SMS settings'
+  mapping:
+    account_sid:
+      type: string
+      label: 'Account SID'
+    auth_token:
+      type: string
+      label: 'Auth token'
+    from:
+      type: string
+      label: 'From Number'

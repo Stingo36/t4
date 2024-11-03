@@ -1,0 +1,24 @@
+{
+    "name": "drupal/smssystem",
+    "description": "This is a service which is used for sending SMS messages.",
+    "type": "drupal-module",
+    "license": "GPL-2.0-or-later",
+    "authors": [
+        {
+            "name": "Vesterli Andrei (andreivesterli)",
+            "homepage": "https://www.drupal.org/u/andreivesterli",
+            "role": "Maintainer"
+        }
+    ],
+    "homepage": "https://www.drupal.org/project/smssystem",
+    "support": {
+        "issues": "https://drupal.org/project/issues/smssystem",
+        "source": "https://git.drupalcode.org/project/smssystem"
+    },
+    "require": {
+        "php": ">=7.4",
+        "drupal/views_data_export": "^1.0",
+        "drupal/token": "^1.0",
+        "drupal/date_popup": "^1.1"
+    }
+}

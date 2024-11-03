@@ -1,0 +1,145 @@
+<?php
+/**
+ * @file
+ * Installation file for miniOrange LDAP Module.
+ */
+use Drupal\ldap_auth\Utilities;
+use Drupal\Core\Database;
+use GuzzleHttp\Exception\GuzzleException;
+
+
+function ldap_auth_install(){
+
+  drupal_flush_all_caches();
+
+  $config = \Drupal::configFactory()->getEditable('ldap_auth.settings');
+  $config->set('miniorange_ldap_steps', "0")
+         ->set('miniorange_ldap_server_port_number', '389')
+         ->set('miniorange_ldap_custom_username_attribute', 'samaccountName')
+         ->save();
+}
+
+/**
+ * Implements hook_update_N().
+ */
+function ldap_auth_update_8107() {
+  $db_schema = Database\Database::getConnection()->schema();
+  /**
+   * table for tracking customer trials
+   */
+  $table_exists = $db_schema->tableExists("mo_ldap_audits_and_logs");
+  if(!$table_exists){
+  $schema['mo_ldap_audits_and_logs'] = [
+    'description' => 'The audits and logs of the user login flow',
+    'fields' => [
+      "uid" => [
+        'description' => 'The primary identifier to record the count',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+      "user" => [
+        'description' => 'The username of the user.',
+        'type' => 'varchar_ascii',
+        'length' => 128,
+        'not null' => TRUE,
+        'default' => '',
+      ],
+      "mail" => [
+        'description' => 'The email of the user.',
+        'type' => 'varchar_ascii',
+        'length' => 128,
+        'not null' => TRUE,
+        'default' => '',
+      ],
+      "date" => [
+        'description'=> 'The timestamp when operation in executed.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ],
+      "error" => [
+        'description' => 'The error occurred on user login.',
+        'type' => 'varchar_ascii',
+        'length' => 128,
+        'not null' => TRUE,
+        'default' => '',
+      ],
+    ],
+    'primary key' => ['uid'],
+  ];
+  \Drupal::database()->schema()->createTable("mo_ldap_audits_and_logs",$schema['mo_ldap_audits_and_logs']);
+  }
+}
+
+/**
+ * Implements hook_update_N()
+ */
+function ldap_auth_update_9209(){
+
+  $config = \Drupal::config('ldap_auth.settings');
+  $status = $config->get('miniorange_ldap_config_status');
+
+  if($status == 'review_config'){
+    \Drupal::configFactory()->getEditable('ldap_auth.settings')->set('miniorange_ldap_is_configured',1)->save();
+  }
+
+}
+
+/**
+ * Implements hook_schema().
+ */
+function ldap_auth_schema() {
+
+  $db_schema = Database\Database::getConnection()->schema();
+  /**
+     * table for tracking customer trials
+     */
+  $table_exists = $db_schema->tableExists("mo_ldap_audits_and_logs");
+
+  if(!$table_exists){
+      $schema['mo_ldap_audits_and_logs'] = [
+          'description' => 'The audits and logs of the user login flow',
+          'fields' => [
+              "uid" => [
+                  'description' => 'The primary identifier to record the count',
+                  'type' => 'serial',
+                  'unsigned' => TRUE,
+                  'not null' => TRUE,
+              ],
+              "user" => [
+                  'description' => 'The username of the user.',
+                  'type' => 'varchar_ascii',
+                  'length' => 128,
+                  'not null' => TRUE,
+                  'default' => '',
+              ],
+              "mail" => [
+                  'description' => 'The email of the user.',
+                  'type' => 'varchar_ascii',
+                  'length' => 128,
+                  'not null' => TRUE,
+                  'default' => '',
+              ],
+              "date" => [
+                  'description'=> 'The timestamp when operation in executed.',
+                  'type' => 'int',
+                  'unsigned' => TRUE,
+                  'not null' => TRUE,
+                  'default' => 0,
+              ],
+              "error" => [
+                  'description' => 'The error occurred on user login.',
+                  'type' => 'varchar_ascii',
+                  'length' => 128,
+                  'not null' => TRUE,
+                  'default' => '',
+              ],
+          ],
+          'primary key' => ['uid'],
+      ];
+      return $schema;
+  }
+
+}

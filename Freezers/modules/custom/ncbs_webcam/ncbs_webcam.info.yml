@@ -1,0 +1,12 @@
+name: 'NCBS WEBCAM'
+type: module
+description: 'TESTING WEBCAM MODULE'
+core_version_requirement: ^10
+package: Custom
+dependencies:
+  - drupal:node
+  - drupal:user
+  - drupal:token
+  - drupal:views  
+  - drupal:file
+version: 1.0

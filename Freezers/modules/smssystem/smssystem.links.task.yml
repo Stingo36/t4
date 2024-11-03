@@ -1,0 +1,49 @@
+# Define the System config tabs.
+smssystem.system:
+  title: 'Configurations'
+  route_name: smssystem.system
+  base_route: smssystem.system
+
+smssystem.api:
+  title: 'API'
+  route_name: smssystem.api
+  base_route: smssystem.system
+
+entity.sms_message_template.collection:
+  title: 'SMS Message Templates'
+  route_name: entity.sms_message_template.collection
+  base_route: smssystem.system
+
+smssystem.sms_queue_list:
+  title: 'SMS - Queue list'
+  route_name: smssystem.sms_queue_list
+  base_route: smssystem.system
+
+# Define the SMS Message Template entity tabs.
+sms_message_template.view:
+  route_name: entity.sms_message_template.canonical
+  base_route: entity.sms_message_template.canonical
+  title: 'View'
+
+sms_message_template.page_edit:
+  route_name: entity.sms_message_template.edit_form
+  base_route: entity.sms_message_template.canonical
+  title: 'Edit'
+
+sms_message_template.delete_confirm:
+  route_name:  entity.sms_message_template.delete_form
+  base_route:  entity.sms_message_template.canonical
+  title: 'Delete'
+  weight: 10
+
+# Define the SMS entity tabs.
+sms.view:
+  route_name: entity.sms.canonical
+  base_route: entity.sms.canonical
+  title: 'View'
+
+sms.delete_confirm:
+  route_name:  entity.sms.delete_form
+  base_route:  entity.sms.canonical
+  title: 'Delete'
+  weight: 10

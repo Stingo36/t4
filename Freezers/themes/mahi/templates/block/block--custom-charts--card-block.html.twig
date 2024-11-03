@@ -1,0 +1,23 @@
+<div class="row">
+  {% for card in content %}
+    <div class="col-lg-3 col-md-6">
+      <div class="card text-white {{ card.color_class }} mb-3">
+        <div class="card-body">
+          <div class="d-flex justify-content-between">
+            <div>
+              <h5 class="card-title">{{ card.title }}</h5>
+              <p class="card-text">{{ card.text }}</p>
+            </div>
+            <div class="icon">
+              <i class="fa {{ card.icon }}"></i>
+            </div>
+          </div>
+          <div class="numbers">
+            <h3>{{ card.number }}</h3>
+            <small>{{ card.small_text }}</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+</div>

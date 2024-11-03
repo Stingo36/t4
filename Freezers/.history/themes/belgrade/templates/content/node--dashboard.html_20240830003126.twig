@@ -1,0 +1,73 @@
+<style>
+  .card {
+    border-radius: 15px;
+    padding: 10px; /* Reduced padding */
+    background-color: #f8f9fa;
+    max-width: 300px; /* Smaller card size */
+    margin: 20px 0; /* Removed auto centering */
+    text-align: center;
+    position: relative;
+    left: 0; /* Align card to the left */
+    transition: transform 0.3s, box-shadow 0.3s; /* Smooth hover effects */
+  }
+
+  .card:hover {
+    transform: scale(1.05); /* Slightly enlarges the card on hover */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Adds a shadow on hover */
+  }
+
+  .card-header {
+    font-size: 18px; /* Smaller font size */
+    font-weight: bold;
+  }
+
+  .large-number {
+    font-size: 36px; /* Smaller large number */
+    font-weight: bold;
+    margin-top: 5px;
+  }
+
+  .icon-circle {
+    display: inline-block;
+    width: 40px; /* Smaller icon size */
+    height: 40px; /* Smaller icon size */
+    border-radius: 50%;
+    background-color: #e9ecef;
+    line-height: 40px;
+    font-size: 16px; /* Smaller font size */
+    font-weight: bold;
+  }
+
+  .image-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 15px;
+  }
+
+  .details-link {
+    display: inline-block;
+    padding: 8px 16px;
+    margin-top: 15px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #fff;
+    background-color: #007bff;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background-color 0.3s, transform 0.3s; /* Smooth link effects */
+  }
+
+  .details-link:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+    transform: translateY(-2px); /* Slight upward movement on hover */
+  }
+</style>
+
+<div class="card shadow-lg">
+  <div class="card-header">All Freezers</div>
+  <div class="image-container">
+    <img src="/Freezers/themes/belgrade/images/closeFreezers.png" class="img-fluid mt-3" alt="Freezer Image" style="max-width: 80px;"> <!-- Centered and smaller image -->
+  </div>
+  <div class="large-number">10</div>
+  <a href="/Freezers/freezer-history" class="details-link">View Details</a> <!-- Enhanced link styling -->
+</div>

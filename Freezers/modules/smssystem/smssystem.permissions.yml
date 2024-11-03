@@ -1,0 +1,23 @@
+# General configuration permissions.
+administer sms system:
+  title: 'Administer SMS System'
+
+# SMS Message Template entity permissions.
+administer sms_message_template entity:
+  title: 'Administer SMS Message Template entity'
+view sms_message_template entity:
+  title: 'View sms_message_template entity'
+edit sms_message_template entity:
+  title: 'Edit sms_message_template entity'
+delete sms_message_template entity:
+  title: 'Delete sms_message_template entity'
+add sms_message_template entity:
+  title: 'Add sms_message_template entity'
+
+# SMS entity permissions.
+administer sms entity:
+  title: 'Administer SMS entity'
+view sms entity:
+  title: 'View sms entity'
+delete sms entity:
+  title: 'Delete sms entity'

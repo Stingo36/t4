@@ -1,0 +1,29 @@
+{#
+/**
+ * @file
+ * Theme override to display a region.
+ *
+ * Available variables:
+ * - content: The content for this region, typically blocks.
+ * - attributes: HTML attributes for the region <div>.
+ * - region: The name of the region variable as defined in the theme's
+ *   .info.yml file.
+ *
+ * @see template_preprocess_region()
+ */
+#}
+{% import "@belgrade/macros.twig" as svg %}
+
+{% extends "@belgrade/layout/region.html.twig" %}
+
+{% do attributes.setAttribute('role', 'navigation') %}
+
+{% block content %}
+    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-center text-center text-sm-start fw-bold">
+        <img src="{{ file_url('public://National_Centre_for_Biological_Sciences_Logo.png') }}" alt="NCBS Logo" class="logo mb-2 mb-sm-0 img-fluid" style="max-width: 130px; width: 100%; height: auto; object-fit: contain;">
+        <div class="content-wrapper flex-grow-1 px-2">
+            {{ content }} 
+        </div>
+        <img src="{{ file_url('public://tifr.png') }}" alt="TIFR Logo" class="logo mb-2 mb-sm-0 img-fluid" style="max-width: 130px; width: 100%; height: auto; object-fit: contain;">
+    </div>
+{% endblock %}

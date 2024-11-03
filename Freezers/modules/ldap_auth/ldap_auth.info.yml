@@ -1,0 +1,10 @@
+name: 'Active Directory / LDAP Integration'
+type: module
+package: miniOrange
+core_version_requirement: ^9.3 || ^10
+description: 'Allows your users to login to your Drupal site using their LDAP / Active Directory credentials.'
+configure: ldap_auth.ldap_config
+# Information added by Drupal.org packaging script on 2024-06-10
+version: '2.0.15'
+project: 'ldap_auth'
+datestamp: 1718022435

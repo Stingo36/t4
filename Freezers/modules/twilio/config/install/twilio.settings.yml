@@ -1,0 +1,9 @@
+account: ''
+token: ''
+number: ''
+confirmation_code_text: ''
+long_sms: ''
+registration_form: ''
+twilio_country_codes_container:
+  country_codes: []
+capture_messages: FALSE

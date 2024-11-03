@@ -1,0 +1,7 @@
+services:
+  metatag_auto_pagination.attachment_tools:
+    class: Drupal\metatag_auto_pagination\Services\AttachmentTools
+
+  metatag_auto_pagination.pager_manager:
+    class: Drupal\metatag_auto_pagination\Services\PagerManager
+    arguments: ['@metatag_auto_pagination.attachment_tools', '@request_stack']

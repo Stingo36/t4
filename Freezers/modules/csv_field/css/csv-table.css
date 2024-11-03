@@ -1,0 +1,33 @@
+.csv-table.hidden {
+  display: none; /* Hide CSV data until it is rendered */
+}
+
+.dataTable.center-content {
+  text-align: center;
+}
+
+
+.dataTables_wrapper table.dataTable thead .sorting,
+.dataTables_wrapper table.dataTable thead .sorting_desc,
+.dataTables_wrapper table.dataTable thead .sorting_asc {
+  background-image: unset !important;
+}
+
+.dataTable .dt-search-left-aligned .dataTables_filter {
+  float: left;
+}
+
+.dataTable .dt-search-right-aligned .dataTables_filter {
+  float: right;
+}
+
+.dataTable .dt-search-submit {
+  margin-left: 10px;
+}
+
+@media screen and (max-width: 1199px) {
+  .dataTable .dt-search-right-aligned .dataTables_filter {
+    float: left;
+    clear: both;
+  }
+}

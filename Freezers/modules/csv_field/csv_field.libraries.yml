@@ -1,0 +1,47 @@
+csv_field:
+  css:
+    theme:
+      css/csv-table.css: {}
+  js:
+    js/csv-field.js: {}
+  dependencies:
+    - core/drupal
+    - csv_field/datatables_responsive
+    - papaparse/papaparse
+autolinker:
+  remote: https://github.com/gregjacobs/Autolinker.js
+  version: 1.10.14
+  license:
+    name: MIT
+    url: https://github.com/gregjacobs/Autolinker.js/blob/master/LICENSE
+    gpl-compatible: true
+  js:
+    https://cdnjs.cloudflare.com/ajax/libs/autolinker/3.14.3/Autolinker.min.js: { type: external, minified: true }
+datatables_cdn:
+  remote: https://datatables.net/
+  version: 1.10.14
+  license:
+    name: MIT
+    url: https://datatables.net/license/mit
+    gpl-compatible: true
+  css:
+    theme:
+      //cdn.datatables.net/1.13.11/css/jquery.dataTables.min.css: { type: external, minified: true }
+  js:
+    //cdn.datatables.net/1.13.11/js/jquery.dataTables.min.js: { type: external, minified: true }
+  dependencies:
+    - core/jquery
+datatables_responsive:
+  remote: https://datatables.net/extensions/responsive/
+  version: 2.2.8
+  license:
+    name: MIT
+    url: https://datatables.net/license/mit
+    gpl-compatible: true
+  css:
+    theme:
+      https://cdn.datatables.net/responsive/2.2.8/css/responsive.dataTables.min.css: { type: external, minified: true }
+  js:
+    https://cdn.datatables.net/responsive/2.2.8/js/dataTables.responsive.min.js: { type: external, minified: true }
+  dependencies:
+    - csv_field/datatables_cdn
